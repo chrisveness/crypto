@@ -21,12 +21,12 @@ var Tea = {};
 // note: if btoa()/atob() are not available (eg IE9-), try github.com/davidchambers/Base64.js
 
 
-/*
+/**
  * Encrypts text using Corrected Block TEA (xxtea) algorithm.
  *
- * @param {string} plaintext - String to be encrypted (multi-byte safe).
- * @param {string} password  - Password to be used for encryption (1st 16 chars).
- * @returns {string} - Encrypted text.
+ * @param   {string} plaintext - String to be encrypted (multi-byte safe).
+ * @param   {string} password - Password to be used for encryption (1st 16 chars).
+ * @returns {string} Encrypted text (encoded as base64).
  */
 Tea.encrypt = function(plaintext, password) {
     plaintext = String(plaintext);
@@ -50,12 +50,12 @@ Tea.encrypt = function(plaintext, password) {
 }
 
 
-/*
+/**
  * Decrypts text using Corrected Block TEA (xxtea) algorithm.
  *
- * @param {string} ciphertext - String to be decrypted.
- * @param {string} password   - Password to be used for decryption (1st 16 chars).
- * @returns {string} - Decrypted text.
+ * @param   {string} ciphertext - String to be decrypted.
+ * @param   {string} password - Password to be used for decryption (1st 16 chars).
+ * @returns {string} Decrypted text.
  */
 Tea.decrypt = function(ciphertext, password) {
     ciphertext = String(ciphertext);
@@ -83,9 +83,9 @@ Tea.decrypt = function(ciphertext, password) {
 /**
  * XXTEA: encodes array of unsigned 32-bit integers using 128-bit key.
  *
- * @param {number[]} v - Data vector.
- * @param {number[]} k - Key.
- * @returns {number[]} - Encoded vector.
+ * @param   {number[]} v - Data vector.
+ * @param   {number[]} k - Key.
+ * @returns {number[]} Encoded vector.
  */
 Tea.encode = function(v, k) {
     if (v.length < 2) v[1] = 0;  // algorithm doesn't work for n<2 so fudge by adding a null
@@ -111,9 +111,9 @@ Tea.encode = function(v, k) {
 /**
  * XXTEA: decodes array of unsigned 32-bit integers using 128-bit key.
  *
- * @param {number[]} v - Data vector.
- * @param {number[]} k - Key.
- * @returns {number[]} - Decoded vector.
+ * @param   {number[]} v - Data vector.
+ * @param   {number[]} k - Key.
+ * @returns {number[]} Decoded vector.
  */
 Tea.decode = function(v, k) {
     var n = v.length;
