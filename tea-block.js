@@ -18,9 +18,6 @@
 var Tea = {};
 
 
-// note: if btoa()/atob() are not available (eg IE9-), try github.com/davidchambers/Base64.js
-
-
 /**
  * Encrypts text using Corrected Block TEA (xxtea) algorithm.
  *
@@ -45,8 +42,8 @@ Tea.encrypt = function(plaintext, password) {
     // convert array of longs to string
     var ciphertext = Tea.longsToStr(v);
 
-    // convert binary string to base64 ascii
-    return btoa(ciphertext); // developer.mozilla.org/en-US/docs/Web/API/window.btoa
+    // convert binary string to base64 ascii for safe transport
+    return ciphertext.base64Encode();
 }
 
 
@@ -64,7 +61,7 @@ Tea.decrypt = function(ciphertext, password) {
     if (ciphertext.length == 0) return('');
 
     //  v is n-word data vector; converted to array of longs from base64 string
-    var v = Tea.strToLongs(atob(ciphertext));
+    var v = Tea.strToLongs(ciphertext.base64Decode());
     //  k is 4-word key; simply convert first 16 chars of password as key
     var k = Tea.strToLongs(password.utf8Encode().slice(0,16));
     var n = v.length;
@@ -168,15 +165,14 @@ Tea.longsToStr = function(l) {
 
 
 /** Extend String object with method to encode multi-byte string to utf8
- *  - http://monsur.hossa.in/2012/07/20/utf-8-in-javascript.html */
+ *  - monsur.hossa.in/2012/07/20/utf-8-in-javascript.html */
 if (typeof String.prototype.utf8Encode == 'undefined') {
     String.prototype.utf8Encode = function() {
         return unescape( encodeURIComponent( this ) );
     }
 }
 
-/** Extend String object with method to decode utf8 string to multi-byte
- *  - http://monsur.hossa.in/2012/07/20/utf-8-in-javascript.html */
+/** Extend String object with method to decode utf8 string to multi-byte */
 if (typeof String.prototype.utf8Decode == 'undefined') {
     String.prototype.utf8Decode = function() {
         return decodeURIComponent( escape( this ) );
@@ -184,5 +180,28 @@ if (typeof String.prototype.utf8Decode == 'undefined') {
 }
 
 
+/** Extend String object with method to encode base64
+ *  - developer.mozilla.org/en-US/docs/Web/API/window.btoa, nodejs.org/api/buffer.html
+ *  note: if btoa()/atob() are not available (eg IE9-), try github.com/davidchambers/Base64.js */
+if (typeof String.prototype.base64Encode == 'undefined') {
+    String.prototype.base64Encode = function() {
+        if (typeof btoa != 'undefined') return btoa(this); // browser
+        if (typeof Buffer != 'undefined') return new Buffer(this, 'utf8').toString('base64'); // Node.js
+        throw new Error('No Base64 Encode');
+    }
+}
+
+/** Extend String object with method to decode base64 */
+if (typeof String.prototype.base64Decode == 'undefined') {
+    String.prototype.base64Decode = function() {
+        if (typeof atob != 'undefined') return atob(this); // browser
+        if (typeof Buffer != 'undefined') return new Buffer(this, 'base64').toString('utf8'); // Node.js
+        throw new Error('No Base64 Decode');
+    }
+}
+
+
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-if (!window.console) window.console = { log: function() {} };
+if (typeof console == 'undefined') var console = { log: function() {} }; // console.log stub
+if (typeof module != 'undefined' && module.exports) module.exports = Tea; // CommonJS export
+if (typeof define == 'function' && define.amd) define([''], function() { return Tea; }); // AMD

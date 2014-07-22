@@ -1,0 +1,28 @@
+{
+    "name": "crypto-libraries",
+    "description": "Collection of cryptographic routines",
+    "repository": { "type": "git", "url": "https://github.com/chrisveness/crypto" },
+    "author": "Chris Veness",
+    "version": "0.0.0",
+    "devDependencies": {
+        "browserify": "^4.0.0",
+        "tap-spec": "^0.2.0",
+        "tape": "^2.12.0"
+    },
+    "testling": {
+        "files": "test.js",
+        "browsers": [
+            "iexplore/7..latest",
+            "chrome/31..latest",
+            "firefox/26..latest",
+            "safari/5..latest",
+            "opera/latest",
+            "iphone/latest",
+            "ipad/latest",
+            "android-browser/latest"
+        ]
+    },
+    "scripts": {
+        "test": "tape test.js | tap-spec"
+    }
+}
