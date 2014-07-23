@@ -175,7 +175,11 @@ if (typeof String.prototype.utf8Encode == 'undefined') {
 /** Extend String object with method to decode utf8 string to multi-byte */
 if (typeof String.prototype.utf8Decode == 'undefined') {
     String.prototype.utf8Decode = function() {
-        return decodeURIComponent( escape( this ) );
+        try {
+            return decodeURIComponent( escape( this ) );
+        } catch (e) {
+            return this; // invalid UTF-8? return as-is
+        }
     }
 }
 
