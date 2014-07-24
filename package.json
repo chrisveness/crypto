@@ -13,8 +13,8 @@
         "files": "test.js",
         "browsers": [
             "iexplore/7..latest",
-            "chrome/31..latest",
-            "firefox/26..latest",
+            "chrome/28..latest",
+            "firefox/24..latest",
             "safari/5..latest",
             "opera/latest",
             "iphone/latest",
