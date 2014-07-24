@@ -75,3 +75,33 @@ test('tea-block', function(assert) {
 });
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
+/* SHA-1: csrc.nist.gov/groups/ST/toolkit/documents/Examples/SHA1.pdf                             */
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
+
+test('sha1', function(assert) {
+    var Sha1 = require('./sha1.js');
+
+    var msg1 = 'abc';
+    assert.equal(Sha1.hash(msg1), 'a9993e364706816aba3e25717850c26c9cd0d89d', 'sha1 1 block msg');
+    var msg2 = 'abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq';
+    assert.equal(Sha1.hash(msg2), '84983e441c3bd26ebaae4aa1f95129e5e54670f1', 'sha1 2 block msg');
+
+    assert.end();
+});
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
+/* SHA-256: csrc.nist.gov/groups/ST/toolkit/documents/Examples/SHA256.pdf                         */
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
+
+test('sha256', function(assert) {
+    var Sha256 = require('./sha256.js');
+
+    var msg1 = 'abc';
+    assert.equal(Sha256.hash(msg1), 'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad', 'sha256 1 block msg');
+    var msg2 = 'abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq';
+    assert.equal(Sha256.hash(msg2), '248d6a61d20638b8e5c026930c3e6039a33ce45964ff2167f6ecedd419db06c1', 'sha256 2 block msg');
+
+    assert.end();
+});
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
