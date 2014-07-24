@@ -29,6 +29,31 @@ This comprises:
 
 More details are available at www.movable-type.co.uk/scripts/aes.html.
 
+sha1.js
+-------
+
+This is a reference implementation of the algorithm described in the FIPS-180-2 standard. It implements
+the standard very closely, in order to aid in understanding the standard and the algorithm itself.
+
+This comprises:
+
+- `hash`: takes a (Unicode) string and generates a hash (of the UTF-8 encoded string)
+
+More details are available at www.movable-type.co.uk/scripts/sha1.html.
+
+sha256.js
+-------
+
+This is a reference implementation of the algorithm described in the FIPS-180-2 standard. It implements
+the standard very closely, in order to aid in understanding the standard and the algorithm itself.
+
+This comprises:
+
+- `hash`: takes a (Unicode) string and generates a hash (of the UTF-8 encoded string)
+
+More details are available at www.movable-type.co.uk/scripts/sha1.html.
+
+
 tea-block.js
 ------------
 
