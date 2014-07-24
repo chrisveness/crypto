@@ -13,13 +13,13 @@
         "files": "test.js",
         "browsers": [
             "iexplore/7..latest",
-            "chrome/28..latest",
-            "firefox/24..latest",
-            "safari/5.1..latest",
-            "opera/latest",
-            "iphone/latest",
-            "ipad/latest",
-            "android-browser/latest"
+            "chrome/26..latest",
+            "firefox/21..latest",
+            "safari/3..latest",
+            "opera/10..latest",
+            "iphone/4..latest",
+            "ipad/4..latest",
+            "android-browser/3..latest"
         ]
     },
     "scripts": {
