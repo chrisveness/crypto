@@ -49,3 +49,11 @@ Documentation
 -------------
 
 Documentation for all these methods is available at www.movable-type.co.uk/scripts/js/crypto/docs.
+
+Browser support
+---------------
+
+[![browser support](https://ci.testling.com/chrisveness/crypto.png)](https://ci.testling.com/chrisveness/crypto)
+
+IE9- doesn’t have btoa()/atob(): if you need to support IE9-, you can use David Chambers’
+[Base64 polyfill](https://github.com/davidchambers/Base64.js).
