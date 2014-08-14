@@ -27,6 +27,9 @@ This comprises:
 - `encrypt`: encrypt a plaintext using a supplied password
 - `decrypt`: decrypt an encrypted ciphertext using a supplied password
 
+Note that there are no standards for data storage formats of AES encryption mode wrapper functions,
+so this is unlikely to inter-operate with standard library functions.
+
 More details are available at www.movable-type.co.uk/scripts/aes.html.
 
 sha1.js
