@@ -7,6 +7,8 @@
 /*             http://www.cl.cam.ac.uk/ftp/users/djw3/xtea.ps (1997)                              */
 /*             http://www.cl.cam.ac.uk/ftp/users/djw3/xxtea.ps (1998)                             */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
+
+/* jshint node:true *//* global define, escape, unescape, btoa, atob */
 'use strict';
 
 
@@ -44,7 +46,7 @@ Tea.encrypt = function(plaintext, password) {
 
     // convert binary string to base64 ascii for safe transport
     return ciphertext.base64Encode();
-}
+};
 
 
 /**
@@ -74,7 +76,7 @@ Tea.decrypt = function(ciphertext, password) {
     plaintext = plaintext.replace(/\0+$/,'');
 
     return plaintext.utf8Decode();
-}
+};
 
 
 /**
@@ -102,7 +104,7 @@ Tea.encode = function(v, k) {
     }
 
     return v;
-}
+};
 
 
 /**
@@ -129,7 +131,7 @@ Tea.decode = function(v, k) {
     }
 
     return v;
-}
+};
 
 
 /**
@@ -145,7 +147,7 @@ Tea.strToLongs = function(s) {
               (s.charCodeAt(i*4+2)<<16) + (s.charCodeAt(i*4+3)<<24);
     }
     return l; // note running off the end of the string generates nulls since bitwise operators
-}             // treat NaN as 0
+};            // treat NaN as 0
 
 
 /**
@@ -158,7 +160,7 @@ Tea.longsToStr = function(l) {
         a[i] = String.fromCharCode(l[i] & 0xFF, l[i]>>>8 & 0xFF, l[i]>>>16 & 0xFF, l[i]>>>24 & 0xFF);
     }
     return a.join('');  // use Array.join() for better performance than repeated string appends
-}
+};
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
@@ -169,7 +171,7 @@ Tea.longsToStr = function(l) {
 if (typeof String.prototype.utf8Encode == 'undefined') {
     String.prototype.utf8Encode = function() {
         return unescape( encodeURIComponent( this ) );
-    }
+    };
 }
 
 /** Extend String object with method to decode utf8 string to multi-byte */
@@ -180,7 +182,7 @@ if (typeof String.prototype.utf8Decode == 'undefined') {
         } catch (e) {
             return this; // invalid UTF-8? return as-is
         }
-    }
+    };
 }
 
 
@@ -192,7 +194,7 @@ if (typeof String.prototype.base64Encode == 'undefined') {
         if (typeof btoa != 'undefined') return btoa(this); // browser
         if (typeof Buffer != 'undefined') return new Buffer(this, 'utf8').toString('base64'); // Node.js
         throw new Error('No Base64 Encode');
-    }
+    };
 }
 
 /** Extend String object with method to decode base64 */
@@ -201,11 +203,10 @@ if (typeof String.prototype.base64Decode == 'undefined') {
         if (typeof atob != 'undefined') return atob(this); // browser
         if (typeof Buffer != 'undefined') return new Buffer(this, 'base64').toString('utf8'); // Node.js
         throw new Error('No Base64 Decode');
-    }
+    };
 }
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-if (typeof console == 'undefined') var console = { log: function() {} }; // console.log stub
 if (typeof module != 'undefined' && module.exports) module.exports = Tea; // CommonJS export
 if (typeof define == 'function' && define.amd) define([''], function() { return Tea; }); // AMD

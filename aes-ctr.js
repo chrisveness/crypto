@@ -1,6 +1,8 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 /*  AES Counter-mode implementation in JavaScript                     (c) Chris Veness 2005-2014  */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
+
+/* jshint node:true *//* global define, escape, unescape, btoa, atob */
 'use strict';
 if (typeof module!='undefined' && module.exports) var Aes = require('./aes'); // CommonJS (Node.js)
 
@@ -75,7 +77,7 @@ Aes.Ctr.encrypt = function(plaintext, password, nBits) {
         // set counter (block #) in last 8 bytes of counter block (leaving nonce in 1st 8 bytes)
         // done in two stages for 32-bit ops: using two words allows us to go past 2^32 blocks (68GB)
         for (var c=0; c<4; c++) counterBlock[15-c] = (b >>> c*8) & 0xff;
-        for (var c=0; c<4; c++) counterBlock[15-c-4] = (b/0x100000000 >>> c*8)
+        for (var c=0; c<4; c++) counterBlock[15-c-4] = (b/0x100000000 >>> c*8);
 
         var cipherCntr = Aes.cipher(counterBlock, keySchedule);  // -- encrypt counter block --
 
@@ -95,7 +97,7 @@ Aes.Ctr.encrypt = function(plaintext, password, nBits) {
     ciphertext = ciphertext.base64Encode();
 
     return ciphertext;
-}
+};
 
 
 /**
@@ -162,7 +164,7 @@ Aes.Ctr.decrypt = function(ciphertext, password, nBits) {
     plaintext = plaintext.utf8Decode();  // decode from UTF8 back to Unicode multi-byte chars
 
     return plaintext;
-}
+};
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
@@ -173,7 +175,7 @@ Aes.Ctr.decrypt = function(ciphertext, password, nBits) {
 if (typeof String.prototype.utf8Encode == 'undefined') {
     String.prototype.utf8Encode = function() {
         return unescape( encodeURIComponent( this ) );
-    }
+    };
 }
 
 /** Extend String object with method to decode utf8 string to multi-byte */
@@ -184,7 +186,7 @@ if (typeof String.prototype.utf8Decode == 'undefined') {
         } catch (e) {
             return this; // invalid UTF-8? return as-is
         }
-    }
+    };
 }
 
 
@@ -196,7 +198,7 @@ if (typeof String.prototype.base64Encode == 'undefined') {
         if (typeof btoa != 'undefined') return btoa(this); // browser
         if (typeof Buffer != 'undefined') return new Buffer(this, 'utf8').toString('base64'); // Node.js
         throw new Error('No Base64 Encode');
-    }
+    };
 }
 
 /** Extend String object with method to decode base64 */
@@ -205,11 +207,10 @@ if (typeof String.prototype.base64Decode == 'undefined') {
         if (typeof atob != 'undefined') return atob(this); // browser
         if (typeof Buffer != 'undefined') return new Buffer(this, 'base64').toString('utf8'); // Node.js
         throw new Error('No Base64 Decode');
-    }
+    };
 }
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-if (typeof console == 'undefined') var console = { log: function() {} }; // console.log stub
 if (typeof module != 'undefined' && module.exports) module.exports = Aes.Ctr; // CommonJs export
 if (typeof define == 'function' && define.amd) define(['Aes'], function() { return Aes.Ctr; }); // AMD

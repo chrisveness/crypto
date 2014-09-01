@@ -1,6 +1,8 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 /*  AES implementation in JavaScript                                  (c) Chris Veness 2005-2014  */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
+
+/* jshint node:true *//* global define */
 'use strict';
 
 
@@ -46,7 +48,7 @@ Aes.cipher = function(input, w) {
     for (var i=0; i<4*Nb; i++) output[i] = state[i%4][Math.floor(i/4)];
 
     return output;
-}
+};
 
 
 /**
@@ -87,7 +89,7 @@ Aes.keyExpansion = function(key) {
     }
 
     return w;
-}
+};
 
 
 /**
@@ -99,7 +101,7 @@ Aes.subBytes = function(s, Nb) {
         for (var c=0; c<Nb; c++) s[r][c] = Aes.sBox[s[r][c]];
     }
     return s;
-}
+};
 
 
 /**
@@ -113,7 +115,7 @@ Aes.shiftRows = function(s, Nb) {
         for (var c=0; c<4; c++) s[r][c] = t[c];         // and copy back
     }          // note that this will work for Nb=4,5,6, but not 7,8 (always 4 for AES):
     return s;  // see asmaes.sourceforge.net/rijndael/rijndaelImplementation.pdf
-}
+};
 
 
 /**
@@ -135,7 +137,7 @@ Aes.mixColumns = function(s, Nb) {
         s[3][c] = a[0] ^ b[0] ^ a[1] ^ a[2] ^ b[3]; // {03}•a0 + a1 + a2 + {02}•a3
     }
     return s;
-}
+};
 
 
 /**
@@ -147,7 +149,7 @@ Aes.addRoundKey = function(state, w, rnd, Nb) {
         for (var c=0; c<Nb; c++) state[r][c] ^= w[rnd*4+c][r];
     }
     return state;
-}
+};
 
 
 /**
@@ -157,7 +159,7 @@ Aes.addRoundKey = function(state, w, rnd, Nb) {
 Aes.subWord = function(w) {
     for (var i=0; i<4; i++) w[i] = Aes.sBox[w[i]];
     return w;
-}
+};
 
 
 /**
@@ -169,7 +171,7 @@ Aes.rotWord = function(w) {
     for (var i=0; i<3; i++) w[i] = w[i+1];
     w[3] = tmp;
     return w;
-}
+};
 
 
 // sBox is pre-computed multiplicative inverse in GF(2^8) used in subBytes and keyExpansion [§5.1.1]
@@ -206,6 +208,5 @@ Aes.rCon = [ [0x00, 0x00, 0x00, 0x00],
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-if (typeof console == 'undefined') var console = { log: function() {} }; // console.log stub
 if (typeof module != 'undefined' && module.exports) module.exports = Aes; // CommonJs export
 if (typeof define == 'function' && define.amd) define([], function() { return Aes; }); // AMD

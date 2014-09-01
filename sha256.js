@@ -5,6 +5,9 @@
 /*        http://csrc.nist.gov/groups/ST/toolkit/examples.html                                    */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
+/* jshint node:true *//* global define, escape, unescape */
+'use strict';
+
 
 /**
  * SHA-256 hash function reference implementation.
@@ -99,7 +102,7 @@ Sha256.hash = function(msg) {
 
     return Sha256.toHexStr(H[0]) + Sha256.toHexStr(H[1]) + Sha256.toHexStr(H[2]) + Sha256.toHexStr(H[3]) + 
            Sha256.toHexStr(H[4]) + Sha256.toHexStr(H[5]) + Sha256.toHexStr(H[6]) + Sha256.toHexStr(H[7]);
-}
+};
 
 
 /**
@@ -108,18 +111,18 @@ Sha256.hash = function(msg) {
  */
 Sha256.ROTR = function(n, x) {
     return (x >>> n) | (x << (32-n));
-}
+};
 
 /**
  * Logical functions [§4.1.2].
  * @private
  */
-Sha256.Σ0 = function(x) { return Sha256.ROTR(2,  x) ^ Sha256.ROTR(13, x) ^ Sha256.ROTR(22, x); }
-Sha256.Σ1 = function(x) { return Sha256.ROTR(6,  x) ^ Sha256.ROTR(11, x) ^ Sha256.ROTR(25, x); }
-Sha256.σ0 = function(x) { return Sha256.ROTR(7,  x) ^ Sha256.ROTR(18, x) ^ (x>>>3);  }
-Sha256.σ1 = function(x) { return Sha256.ROTR(17, x) ^ Sha256.ROTR(19, x) ^ (x>>>10); }
-Sha256.Ch  = function(x, y, z) { return (x & y) ^ (~x & z); }
-Sha256.Maj = function(x, y, z) { return (x & y) ^ (x & z) ^ (y & z); }
+Sha256.Σ0  = function(x) { return Sha256.ROTR(2,  x) ^ Sha256.ROTR(13, x) ^ Sha256.ROTR(22, x); };
+Sha256.Σ1  = function(x) { return Sha256.ROTR(6,  x) ^ Sha256.ROTR(11, x) ^ Sha256.ROTR(25, x); };
+Sha256.σ0  = function(x) { return Sha256.ROTR(7,  x) ^ Sha256.ROTR(18, x) ^ (x>>>3);  };
+Sha256.σ1  = function(x) { return Sha256.ROTR(17, x) ^ Sha256.ROTR(19, x) ^ (x>>>10); };
+Sha256.Ch  = function(x, y, z) { return (x & y) ^ (~x & z); };
+Sha256.Maj = function(x, y, z) { return (x & y) ^ (x & z) ^ (y & z); };
 
 
 /**
@@ -132,7 +135,7 @@ Sha256.toHexStr = function(n) {
     var s="", v;
     for (var i=7; i>=0; i--) { v = (n>>>(i*4)) & 0xf; s += v.toString(16); }
     return s;
-}
+};
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
@@ -143,7 +146,7 @@ Sha256.toHexStr = function(n) {
 if (typeof String.prototype.utf8Encode == 'undefined') {
     String.prototype.utf8Encode = function() {
         return unescape( encodeURIComponent( this ) );
-    }
+    };
 }
 
 /** Extend String object with method to decode utf8 string to multi-byte */
@@ -154,11 +157,10 @@ if (typeof String.prototype.utf8Decode == 'undefined') {
         } catch (e) {
             return this; // invalid UTF-8? return as-is
         }
-    }
+    };
 }
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-if (typeof console == 'undefined') var console = { log: function() {} }; // console.log stub
 if (typeof module != 'undefined' && module.exports) module.exports = Sha256; // CommonJs export
 if (typeof define == 'function' && define.amd) define([], function() { return Sha256; }); // AMD

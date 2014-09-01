@@ -5,6 +5,9 @@
 /*        http://csrc.nist.gov/groups/ST/toolkit/examples.html                                    */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
+/* jshint node:true *//* global define, escape, unescape */
+'use strict';
+
 
 /**
  * SHA-1 hash function reference implementation.
@@ -89,7 +92,7 @@ Sha1.hash = function(msg) {
 
     return Sha1.toHexStr(H0) + Sha1.toHexStr(H1) + Sha1.toHexStr(H2) +
            Sha1.toHexStr(H3) + Sha1.toHexStr(H4);
-}
+};
 
 
 /**
@@ -103,7 +106,7 @@ Sha1.f = function(s, x, y, z)  {
         case 2: return (x & y) ^ (x & z) ^ (y & z);  // Maj()
         case 3: return  x ^ y  ^  z;                 // Parity()
     }
-}
+};
 
 /**
  * Rotates left (circular left shift) value x by n positions [§3.2.5].
@@ -111,7 +114,7 @@ Sha1.f = function(s, x, y, z)  {
  */
 Sha1.ROTL = function(x, n) {
     return (x<<n) | (x>>>(32-n));
-}
+};
 
 
 /**
@@ -124,7 +127,7 @@ Sha1.toHexStr = function(n) {
     var s="", v;
     for (var i=7; i>=0; i--) { v = (n>>>(i*4)) & 0xf; s += v.toString(16); }
     return s;
-}
+};
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
@@ -135,7 +138,7 @@ Sha1.toHexStr = function(n) {
 if (typeof String.prototype.utf8Encode == 'undefined') {
     String.prototype.utf8Encode = function() {
         return unescape( encodeURIComponent( this ) );
-    }
+    };
 }
 
 /** Extend String object with method to decode utf8 string to multi-byte */
@@ -146,11 +149,10 @@ if (typeof String.prototype.utf8Decode == 'undefined') {
         } catch (e) {
             return this; // invalid UTF-8? return as-is
         }
-    }
+    };
 }
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-if (typeof console == 'undefined') var console = { log: function() {} }; // console.log stub
 if (typeof module != 'undefined' && module.exports) module.exports = Sha1; // CommonJs export
 if (typeof define == 'function' && define.amd) define([], function() { return Sha1; }); // AMD
