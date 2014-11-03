@@ -54,7 +54,7 @@ This comprises:
 
 - `hash`: takes a (Unicode) string and generates a hash (of the UTF-8 encoded string)
 
-More details are available at www.movable-type.co.uk/scripts/sha1.html.
+More details are available at www.movable-type.co.uk/scripts/sha256.html.
 
 
 tea-block.js
