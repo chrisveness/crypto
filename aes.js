@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/*  AES implementation in JavaScript                                  (c) Chris Veness 2005-2014  */
+/*  AES implementation in JavaScript                     (c) Chris Veness 2005-2014 / MIT Licence */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 /* jshint node:true *//* global define */

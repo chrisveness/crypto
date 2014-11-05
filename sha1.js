@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/*  SHA-1 implementation in JavaScript                                (c) Chris Veness 2002-2014  */
+/*  SHA-1 implementation in JavaScript                  (c) Chris Veness 2002-2014 / MIT Licence  */
 /*                                                                                                */
 /*  - see http://csrc.nist.gov/groups/ST/toolkit/secure_hashing.html                              */
 /*        http://csrc.nist.gov/groups/ST/toolkit/examples.html                                    */

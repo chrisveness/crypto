@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/*  Block TEA (xxtea) Tiny Encryption Algorithm                       (c) Chris Veness 2002-2014  */
+/*  Block TEA (xxtea) Tiny Encryption Algorithm         (c) Chris Veness 2002-2014 / MIT Licence  */
 /*   - www.movable-type.co.uk/scripts/tea-block.html                                              */
 /*                                                                                                */
 /*  Algorithm: David Wheeler & Roger Needham, Cambridge University Computer Lab                   */
