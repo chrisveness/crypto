@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/*  AES Counter-mode implementation in JavaScript       (c) Chris Veness 2005-2014 / MIT Licence  */
+/*  AES Counter-mode implementation in JavaScript       (c) Chris Veness 2005-2016 / MIT Licence  */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 /* jshint node:true *//* global define, escape, unescape, btoa, atob */
@@ -71,7 +71,7 @@ Aes.Ctr.encrypt = function(plaintext, password, nBits) {
     var keySchedule = Aes.keyExpansion(key);
 
     var blockCount = Math.ceil(plaintext.length/blockSize);
-    var ciphertxt = new Array(blockCount);  // ciphertext as array of strings
+    var ciphertext = '';
 
     for (var b=0; b<blockCount; b++) {
         // set counter (block #) in last 8 bytes of counter block (leaving nonce in 1st 8 bytes)
@@ -85,16 +85,15 @@ Aes.Ctr.encrypt = function(plaintext, password, nBits) {
         var blockLength = b<blockCount-1 ? blockSize : (plaintext.length-1)%blockSize+1;
         var cipherChar = new Array(blockLength);
 
-        for (var i=0; i<blockLength; i++) {  // -- xor plaintext with ciphered counter char-by-char --
+        for (var i=0; i<blockLength; i++) {
+            // -- xor plaintext with ciphered counter char-by-char --
             cipherChar[i] = cipherCntr[i] ^ plaintext.charCodeAt(b*blockSize+i);
             cipherChar[i] = String.fromCharCode(cipherChar[i]);
         }
-        ciphertxt[b] = cipherChar.join('');
+        ciphertext += cipherChar.join('');
     }
 
-    // use Array.join() for better performance than repeated string appends
-    var ciphertext = ctrTxt + ciphertxt.join('');
-    ciphertext = ciphertext.base64Encode();
+    ciphertext =  (ctrTxt+ciphertext).base64Encode();
 
     return ciphertext;
 };
@@ -141,7 +140,7 @@ Aes.Ctr.decrypt = function(ciphertext, password, nBits) {
     ciphertext = ct;  // ciphertext is now array of block-length strings
 
     // plaintext will get generated block-by-block into array of block-length strings
-    var plaintxt = new Array(ciphertext.length);
+    var plaintext = '';
 
     for (var b=0; b<nBlocks; b++) {
         // set counter (block #) in last 8 bytes of counter block (leaving nonce in 1st 8 bytes)
@@ -152,15 +151,13 @@ Aes.Ctr.decrypt = function(ciphertext, password, nBits) {
 
         var plaintxtByte = new Array(ciphertext[b].length);
         for (var i=0; i<ciphertext[b].length; i++) {
-            // -- xor plaintxt with ciphered counter byte-by-byte --
+            // -- xor plaintext with ciphered counter byte-by-byte --
             plaintxtByte[i] = cipherCntr[i] ^ ciphertext[b].charCodeAt(i);
             plaintxtByte[i] = String.fromCharCode(plaintxtByte[i]);
         }
-        plaintxt[b] = plaintxtByte.join('');
+        plaintext += plaintxtByte.join('');
     }
 
-    // join array of blocks into single plaintext string
-    var plaintext = plaintxt.join('');
     plaintext = plaintext.utf8Decode();  // decode from UTF8 back to Unicode multi-byte chars
 
     return plaintext;
