@@ -1,10 +1,12 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/*  AES Counter-mode implementation in JavaScript       (c) Chris Veness 2005-2016 / MIT Licence  */
+/*  AES counter-mode (CTR) implementation in JavaScript               (c) Chris Veness 2005-2016  */
+/*                                                                                   MIT Licence  */
+/* www.movable-type.co.uk/scripts/aes.html                                                        */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
-/* jshint node:true *//* global define, escape, unescape, btoa, atob */
+/* eslint no-redeclare: 0 *//* global WorkerGlobalScope */
 'use strict';
-if (typeof module!='undefined' && module.exports) var Aes = require('./aes'); // CommonJS (Node.js)
+if (typeof module!='undefined' && module.exports) var Aes = require('./aes.js'); // ≡ import Aes from 'aes.js'
 
 
 /**
@@ -91,6 +93,11 @@ Aes.Ctr.encrypt = function(plaintext, password, nBits) {
             cipherChar[i] = String.fromCharCode(cipherChar[i]);
         }
         ciphertext += cipherChar.join('');
+
+        // if within web worker, announce progress every 1000 blocks (roughly every 50ms)
+        if (typeof WorkerGlobalScope != 'undefined' && self instanceof WorkerGlobalScope) {
+            if (b%1000 == 0) self.postMessage({ progress: b/blockCount });
+        }
     }
 
     ciphertext =  (ctrTxt+ciphertext).base64Encode();
@@ -156,6 +163,11 @@ Aes.Ctr.decrypt = function(ciphertext, password, nBits) {
             plaintxtByte[i] = String.fromCharCode(plaintxtByte[i]);
         }
         plaintext += plaintxtByte.join('');
+
+        // if within web worker, announce progress every 1000 blocks (roughly every 50ms)
+        if (typeof WorkerGlobalScope != 'undefined' && self instanceof WorkerGlobalScope) {
+            if (b%1000 == 0) self.postMessage({ progress: b/nBlocks });
+        }
     }
 
     plaintext = plaintext.utf8Decode();  // decode from UTF8 back to Unicode multi-byte chars
@@ -210,5 +222,4 @@ if (typeof String.prototype.base64Decode == 'undefined') {
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-if (typeof module != 'undefined' && module.exports) module.exports = Aes.Ctr; // CommonJs export
-if (typeof define == 'function' && define.amd) define(['Aes'], function() { return Aes.Ctr; }); // AMD
+if (typeof module != 'undefined' && module.exports) module.exports = Aes.Ctr; // ≡ export default Aes.Ctr

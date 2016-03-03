@@ -1,8 +1,10 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/*  AES implementation in JavaScript                     (c) Chris Veness 2005-2014 / MIT Licence */
+/* AES implementation in JavaScript                                   (c) Chris Veness 2005-2016  */
+/*                                                                                   MIT Licence  */
+/* www.movable-type.co.uk/scripts/aes.html                                                        */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
-/* jshint node:true *//* global define */
+/* eslint no-redeclare: 0 */
 'use strict';
 
 
@@ -204,9 +206,8 @@ Aes.rCon = [ [0x00, 0x00, 0x00, 0x00],
              [0x40, 0x00, 0x00, 0x00],
              [0x80, 0x00, 0x00, 0x00],
              [0x1b, 0x00, 0x00, 0x00],
-             [0x36, 0x00, 0x00, 0x00] ]; 
+             [0x36, 0x00, 0x00, 0x00] ];
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-if (typeof module != 'undefined' && module.exports) module.exports = Aes; // CommonJs export
-if (typeof define == 'function' && define.amd) define([], function() { return Aes; }); // AMD
+if (typeof module != 'undefined' && module.exports) module.exports = Aes; // ≡ export default Aes
