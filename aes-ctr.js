@@ -37,7 +37,7 @@ Aes.Ctr = {};
  */
 Aes.Ctr.encrypt = function(plaintext, password, nBits) {
     var blockSize = 16;  // block size fixed at 16 bytes / 128 bits (Nb=4) for AES
-    if (!(nBits==128 || nBits==192 || nBits==256)) return ''; // standard allows 128/192/256 bit keys
+    if (!(nBits==128 || nBits==192 || nBits==256)) throw new Error('Key size is not 128 / 192 / 256');
     plaintext = String(plaintext).utf8Encode();
     password = String(password).utf8Encode();
 
@@ -119,7 +119,7 @@ Aes.Ctr.encrypt = function(plaintext, password, nBits) {
  */
 Aes.Ctr.decrypt = function(ciphertext, password, nBits) {
     var blockSize = 16;  // block size fixed at 16 bytes / 128 bits (Nb=4) for AES
-    if (!(nBits==128 || nBits==192 || nBits==256)) return ''; // standard allows 128/192/256 bit keys
+    if (!(nBits==128 || nBits==192 || nBits==256)) throw new Error('Key size is not 128 / 192 / 256');
     ciphertext = String(ciphertext).base64Decode();
     password = String(password).utf8Encode();
 
