@@ -46,7 +46,7 @@ Aes.Ctr.encrypt = function(plaintext, password, nBits) {
     var nBytes = nBits/8;  // no bytes in key (16/24/32)
     var pwBytes = new Array(nBytes);
     for (var i=0; i<nBytes; i++) {  // use 1st 16/24/32 chars of password for key
-        pwBytes[i] = isNaN(password.charCodeAt(i)) ? 0 : password.charCodeAt(i);
+        pwBytes[i] = i<password.length ?  password.charCodeAt(i) : 0;
     }
     var key = Aes.cipher(pwBytes, Aes.keyExpansion(pwBytes)); // gives us 16-byte key
     key = key.concat(key.slice(0, nBytes-16));  // expand key to 16/24/32 bytes long
@@ -127,7 +127,7 @@ Aes.Ctr.decrypt = function(ciphertext, password, nBits) {
     var nBytes = nBits/8;  // no bytes in key
     var pwBytes = new Array(nBytes);
     for (var i=0; i<nBytes; i++) {
-        pwBytes[i] = isNaN(password.charCodeAt(i)) ? 0 : password.charCodeAt(i);
+        pwBytes[i] = i<password.length ?  password.charCodeAt(i) : 0;
     }
     var key = Aes.cipher(pwBytes, Aes.keyExpansion(pwBytes));
     key = key.concat(key.slice(0, nBytes-16));  // expand key to 16/24/32 bytes long
