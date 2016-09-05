@@ -8,7 +8,6 @@
 /*             http://www.cl.cam.ac.uk/ftp/users/djw3/xxtea.ps (1998)                             */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
-/* jshint node:true *//* global define, escape, unescape, btoa, atob */
 'use strict';
 
 
@@ -37,7 +36,6 @@ Tea.encrypt = function(plaintext, password) {
     var v = Tea.strToLongs(plaintext.utf8Encode());
     //  k is 4-word key; simply convert first 16 chars of password as key
     var k = Tea.strToLongs(password.utf8Encode().slice(0,16));
-    var n = v.length;
 
     v = Tea.encode(v, k);
 
@@ -66,7 +64,6 @@ Tea.decrypt = function(ciphertext, password) {
     var v = Tea.strToLongs(ciphertext.base64Decode());
     //  k is 4-word key; simply convert first 16 chars of password as key
     var k = Tea.strToLongs(password.utf8Encode().slice(0,16));
-    var n = v.length;
 
     v = Tea.decode(v, k);
 
@@ -209,4 +206,3 @@ if (typeof String.prototype.base64Decode == 'undefined') {
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 if (typeof module != 'undefined' && module.exports) module.exports = Tea; // CommonJS export
-if (typeof define == 'function' && define.amd) define([''], function() { return Tea; }); // AMD

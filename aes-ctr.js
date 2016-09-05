@@ -4,7 +4,7 @@
 /* www.movable-type.co.uk/scripts/aes.html                                                        */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
-/* eslint no-redeclare: 0 *//* global WorkerGlobalScope */
+/* global WorkerGlobalScope */
 'use strict';
 if (typeof module!='undefined' && module.exports) var Aes = require('./aes.js'); // ≡ import Aes from 'aes.js'
 

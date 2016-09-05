@@ -5,7 +5,6 @@
 /*        http://csrc.nist.gov/groups/ST/toolkit/examples.html                                    */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
-/* jshint node:true *//* global define, escape, unescape */
 'use strict';
 
 
@@ -26,7 +25,7 @@ var Sha256 = {};
 Sha256.hash = function(msg) {
     // convert string to UTF-8, as SHA only deals with byte-streams
     msg = msg.utf8Encode();
-    
+
     // constants [§4.2.2]
     var K = [
         0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
@@ -41,8 +40,8 @@ Sha256.hash = function(msg) {
     var H = [
         0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19 ];
 
-    // PREPROCESSING 
- 
+    // PREPROCESSING
+
     msg += String.fromCharCode(0x80);  // add trailing '1' bit (+ 0's padding) to string [§5.1.1]
 
     // convert string msg into 512-bit/16-integer blocks arrays of ints [§5.2.1]
@@ -53,7 +52,7 @@ Sha256.hash = function(msg) {
     for (var i=0; i<N; i++) {
         M[i] = new Array(16);
         for (var j=0; j<16; j++) {  // encode 4 chars per integer, big-endian encoding
-            M[i][j] = (msg.charCodeAt(i*64+j*4)<<24) | (msg.charCodeAt(i*64+j*4+1)<<16) | 
+            M[i][j] = (msg.charCodeAt(i*64+j*4)<<24) | (msg.charCodeAt(i*64+j*4+1)<<16) |
                       (msg.charCodeAt(i*64+j*4+2)<<8) | (msg.charCodeAt(i*64+j*4+3));
         } // note running off the end of msg is ok 'cos bitwise ops on NaN return 0
     }
@@ -91,16 +90,16 @@ Sha256.hash = function(msg) {
         }
          // 4 - compute the new intermediate hash value (note 'addition modulo 2^32')
         H[0] = (H[0]+a) & 0xffffffff;
-        H[1] = (H[1]+b) & 0xffffffff; 
-        H[2] = (H[2]+c) & 0xffffffff; 
-        H[3] = (H[3]+d) & 0xffffffff; 
+        H[1] = (H[1]+b) & 0xffffffff;
+        H[2] = (H[2]+c) & 0xffffffff;
+        H[3] = (H[3]+d) & 0xffffffff;
         H[4] = (H[4]+e) & 0xffffffff;
         H[5] = (H[5]+f) & 0xffffffff;
-        H[6] = (H[6]+g) & 0xffffffff; 
-        H[7] = (H[7]+h) & 0xffffffff; 
+        H[6] = (H[6]+g) & 0xffffffff;
+        H[7] = (H[7]+h) & 0xffffffff;
     }
 
-    return Sha256.toHexStr(H[0]) + Sha256.toHexStr(H[1]) + Sha256.toHexStr(H[2]) + Sha256.toHexStr(H[3]) + 
+    return Sha256.toHexStr(H[0]) + Sha256.toHexStr(H[1]) + Sha256.toHexStr(H[2]) + Sha256.toHexStr(H[3]) +
            Sha256.toHexStr(H[4]) + Sha256.toHexStr(H[5]) + Sha256.toHexStr(H[6]) + Sha256.toHexStr(H[7]);
 };
 
@@ -132,7 +131,7 @@ Sha256.Maj = function(x, y, z) { return (x & y) ^ (x & z) ^ (y & z); };
 Sha256.toHexStr = function(n) {
     // note can't use toString(16) as it is implementation-dependant,
     // and in IE returns signed numbers when used on full words
-    var s="", v;
+    var s='', v;
     for (var i=7; i>=0; i--) { v = (n>>>(i*4)) & 0xf; s += v.toString(16); }
     return s;
 };
@@ -163,4 +162,3 @@ if (typeof String.prototype.utf8Decode == 'undefined') {
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 if (typeof module != 'undefined' && module.exports) module.exports = Sha256; // CommonJs export
-if (typeof define == 'function' && define.amd) define([], function() { return Sha256; }); // AMD

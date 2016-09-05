@@ -5,7 +5,6 @@
 /*        http://csrc.nist.gov/groups/ST/toolkit/examples.html                                    */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
-/* jshint node:true *//* global define, escape, unescape */
 'use strict';
 
 
@@ -124,7 +123,7 @@ Sha1.ROTL = function(x, n) {
 Sha1.toHexStr = function(n) {
     // note can't use toString(16) as it is implementation-dependant,
     // and in IE returns signed numbers when used on full words
-    var s="", v;
+    var s='', v;
     for (var i=7; i>=0; i--) { v = (n>>>(i*4)) & 0xf; s += v.toString(16); }
     return s;
 };
@@ -155,4 +154,3 @@ if (typeof String.prototype.utf8Decode == 'undefined') {
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 if (typeof module != 'undefined' && module.exports) module.exports = Sha1; // CommonJs export
-if (typeof define == 'function' && define.amd) define([], function() { return Sha1; }); // AMD

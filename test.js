@@ -1,7 +1,8 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 //  Crypto Test Harness                                                    (c) Chris Veness 2014  */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-'use strict'
+
+'use strict';
 
 var test = require('tape');
 
