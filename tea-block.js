@@ -189,7 +189,7 @@ if (typeof String.prototype.utf8Decode == 'undefined') {
 if (typeof String.prototype.base64Encode == 'undefined') {
     String.prototype.base64Encode = function() {
         if (typeof btoa != 'undefined') return btoa(this); // browser
-        if (typeof Buffer != 'undefined') return new Buffer(this, 'utf8').toString('base64'); // Node.js
+        if (typeof Buffer != 'undefined') return new Buffer(this, 'binary').toString('base64'); // Node.js
         throw new Error('No Base64 Encode');
     };
 }
@@ -198,7 +198,7 @@ if (typeof String.prototype.base64Encode == 'undefined') {
 if (typeof String.prototype.base64Decode == 'undefined') {
     String.prototype.base64Decode = function() {
         if (typeof atob != 'undefined') return atob(this); // browser
-        if (typeof Buffer != 'undefined') return new Buffer(this, 'base64').toString('utf8'); // Node.js
+        if (typeof Buffer != 'undefined') return new Buffer(this, 'base64').toString('binary'); // Node.js
         throw new Error('No Base64 Decode');
     };
 }
