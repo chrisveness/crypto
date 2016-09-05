@@ -81,7 +81,6 @@ Documentation for all these methods is available at www.movable-type.co.uk/scrip
 Browser support
 ---------------
 
-[![browser support](https://ci.testling.com/chrisveness/crypto.png)](https://ci.testling.com/chrisveness/crypto)
-
-IE9- doesn’t have btoa()/atob(): if you need to support IE9-, you can use David Chambers’
-[Base64 polyfill](https://github.com/davidchambers/Base64.js).
+IE9- doesn’t have btoa()/atob(): if you need to support IE9- 
+([no!](http://venturebeat.com/2016/01/12/microsoft-ends-support-for-ie8-ie9-ie10-and-windows-8/)), 
+you can use David Chambers’ [Base64 polyfill](https://github.com/davidchambers/Base64.js).
