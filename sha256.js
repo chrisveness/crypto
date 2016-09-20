@@ -37,8 +37,15 @@
      * @returns {string} Hash of msg as hex character string
      */
     Sha256.hash = function(msg) {
+
         // convert string to UTF-8, as SHA only deals with byte-streams
-        msg = msg.utf8Encode();
+        /** Extend String object with method to encode multi-byte string to utf8
+        *  - monsur.hossa.in/2012/07/20/utf-8-in-javascript.html */
+        if (typeof String.prototype.utf8Encode == 'undefined') {
+            msg = unescape(encodeURIComponent(msg));
+        } else {
+            msg = msg.utf8Encode();
+        }
 
         // constants [§4.2.2]
         var K = [
@@ -149,18 +156,6 @@
         for (var i=7; i>=0; i--) { v = (n>>>(i*4)) & 0xf; s += v.toString(16); }
         return s;
     };
-
-
-    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-
-
-    /** Extend String object with method to encode multi-byte string to utf8
-     *  - monsur.hossa.in/2012/07/20/utf-8-in-javascript.html */
-    if (typeof String.prototype.utf8Encode == 'undefined') {
-        String.prototype.utf8Encode = function() {
-            return unescape( encodeURIComponent( this ) );
-        };
-    }
 
     return Sha256;
 });
