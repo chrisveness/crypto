@@ -162,16 +162,5 @@
         };
     }
 
-    /** Extend String object with method to decode utf8 string to multi-byte */
-    if (typeof String.prototype.utf8Decode == 'undefined') {
-        String.prototype.utf8Decode = function() {
-            try {
-                return decodeURIComponent( escape( this ) );
-            } catch (e) {
-                return this; // invalid UTF-8? return as-is
-            }
-        };
-    }
-
     return Sha256;
 });
