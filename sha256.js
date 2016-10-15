@@ -65,15 +65,15 @@ Sha256.hash = function(msg) {
 
     // HASH COMPUTATION [§6.1.2]
 
-    var W = new Array(64); var a, b, c, d, e, f, g, h;
     for (var i=0; i<N; i++) {
+        var W = new Array(64);
 
         // 1 - prepare message schedule 'W'
         for (var t=0;  t<16; t++) W[t] = M[i][t];
         for (var t=16; t<64; t++) W[t] = (Sha256.σ1(W[t-2]) + W[t-7] + Sha256.σ0(W[t-15]) + W[t-16]) >>> 0;
 
         // 2 - initialise working variables a, b, c, d, e, f, g, h with previous hash value
-        a = H[0]; b = H[1]; c = H[2]; d = H[3]; e = H[4]; f = H[5]; g = H[6]; h = H[7];
+        var a = H[0], b = H[1], c = H[2], d = H[3], e = H[4], f = H[5], g = H[6], h = H[7];
 
         // 3 - main loop (note 'addition modulo 2^32')
         for (var t=0; t<64; t++) {

@@ -52,23 +52,19 @@ Sha1.hash = function(msg) {
     M[N-1][15] = ((msg.length-1)*8) & 0xffffffff;
 
     // set initial hash value [§5.3.1]
-    var H0 = 0x67452301;
-    var H1 = 0xefcdab89;
-    var H2 = 0x98badcfe;
-    var H3 = 0x10325476;
-    var H4 = 0xc3d2e1f0;
+    var H = [ 0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476, 0xc3d2e1f0 ];
 
     // HASH COMPUTATION [§6.1.2]
 
-    var W = new Array(80); var a, b, c, d, e;
     for (var i=0; i<N; i++) {
+        var W = new Array(80);
 
         // 1 - prepare message schedule 'W'
         for (var t=0;  t<16; t++) W[t] = M[i][t];
         for (var t=16; t<80; t++) W[t] = Sha1.ROTL(W[t-3] ^ W[t-8] ^ W[t-14] ^ W[t-16], 1);
 
         // 2 - initialise five working variables a, b, c, d, e with previous hash value
-        a = H0; b = H1; c = H2; d = H3; e = H4;
+        var a = H[0], b = H[1], c = H[2], d = H[3], e = H[4];
 
         // 3 - main loop (use JavaScript '>>> 0' to emulate UInt32 variables)
         for (var t=0; t<80; t++) {
@@ -83,18 +79,17 @@ Sha1.hash = function(msg) {
 
         // 4 - compute the new intermediate hash value (note 'addition modulo 2^32' – JavaScript
         // '>>> 0' coerces to unsigned UInt32 which achieves modulo 2^32 addition)
-        H0 = (H0+a) >>> 0;
-        H1 = (H1+b) >>> 0;
-        H2 = (H2+c) >>> 0;
-        H3 = (H3+d) >>> 0;
-        H4 = (H4+e) >>> 0;
+        H[0] = (H[0]+a) >>> 0;
+        H[1] = (H[1]+b) >>> 0;
+        H[2] = (H[2]+c) >>> 0;
+        H[3] = (H[3]+d) >>> 0;
+        H[4] = (H[4]+e) >>> 0;
     }
 
     // convert H0..H4 to hex strings (with leading zeros)
-    var hash = [ H0, H1, H2, H3, H4 ];
-    for (var h=0; h<hash.length; h++) hash[h] = ('00000000'+hash[h].toString(16)).slice(-8);
+    for (var h=0; h<H.length; h++) H[h] = ('00000000'+H[h].toString(16)).slice(-8);
 
-    return hash.join('');
+    return H.join('');
 };
 
 
