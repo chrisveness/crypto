@@ -20,11 +20,26 @@ var Sha1 = {};
  * Generates SHA-1 hash of string.
  *
  * @param   {string} msg - (Unicode) string to be hashed.
+ * @param   {Object} [options]
+ * @param   {string} [options.msgFormat=string] - Message format: 'string' for JavaScript string
+ *   (gets converted to UTF-8 for hashing); 'hex-bytes' for string of hex bytes ('616263' ≡ 'abc') .
+ * @param   {string} [options.outFormat=hex] - Output format: 'hex' for string of contiguous
+ *   hex bytes; 'hex-8' for grouping hex bytes into groups of 8 bytes (16 characters).
  * @returns {string} Hash of msg as hex character string.
  */
-Sha1.hash = function(msg) {
-    // convert string to UTF-8, as SHA only deals with byte-streams
-    msg = msg.utf8Encode();
+Sha1.hash = function(msg, options) {
+    var defaults = { msgFormat: 'string', outFormat: 'hex' };
+    var opt = Object.assign(defaults, options);
+
+    switch (opt.msgFormat) {
+        default:
+        case 'string':  // convert string to UTF-8, as SHA only deals with byte-streams
+            msg = Sha1.utf8Encode(msg);
+            break;
+        case 'hex-bytes':
+            msg = Sha1.hexBytesToString(msg);
+            break;
+    }
 
     // constants [§4.2.1]
     var K = [ 0x5a827999, 0x6ed9eba1, 0x8f1bbcdc, 0xca62c1d6 ];
@@ -89,7 +104,10 @@ Sha1.hash = function(msg) {
     // convert H0..H4 to hex strings (with leading zeros)
     for (var h=0; h<H.length; h++) H[h] = ('00000000'+H[h].toString(16)).slice(-8);
 
-    return H.join('');
+    // concatenate H0..H4, with separator if required
+    const separator = opt.outFormat=='hex-8' ? ' ' : '';
+
+    return H.join(separator);
 };
 
 
@@ -118,24 +136,25 @@ Sha1.ROTL = function(x, n) {
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 
-/** Extend String object with method to encode multi-byte string to utf8
- *  - monsur.hossa.in/2012/07/20/utf-8-in-javascript.html */
-if (typeof String.prototype.utf8Encode == 'undefined') {
-    String.prototype.utf8Encode = function() {
-        return unescape( encodeURIComponent( this ) );
-    };
-}
+/**
+ * Encodes multi-byte string to utf8 - monsur.hossa.in/2012/07/20/utf-8-in-javascript.html
+ */
+Sha1.utf8Encode = function(str) {
+    return unescape(encodeURIComponent(str));
+};
 
-/** Extend String object with method to decode utf8 string to multi-byte */
-if (typeof String.prototype.utf8Decode == 'undefined') {
-    String.prototype.utf8Decode = function() {
-        try {
-            return decodeURIComponent( escape( this ) );
-        } catch (e) {
-            return this; // invalid UTF-8? return as-is
-        }
-    };
-}
+
+/**
+ * Converts a string of a sequence of hex numbers to a string of characters (eg '616263' => 'abc').
+ */
+Sha1.hexBytesToString = function(hexStr) {
+    hexStr = hexStr.replace(' ', ''); // allow space-separated groups
+    let str = '';
+    for (let i=0; i<hexStr.length; i+=2) {
+        str += String.fromCharCode(parseInt(hexStr.slice(i, i+2), 16));
+    }
+    return str;
+};
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
