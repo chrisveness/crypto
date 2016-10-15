@@ -1,6 +1,6 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/*  SHA-1 implementation in JavaScript                  (c) Chris Veness 2002-2014 / MIT Licence  */
-/*                                                                                                */
+/*  SHA-1 implementation in JavaScript                                (c) Chris Veness 2002-2016  */
+/*                                                                                   MIT Licence  */
 /*  - see http://csrc.nist.gov/groups/ST/toolkit/secure_hashing.html                              */
 /*        http://csrc.nist.gov/groups/ST/toolkit/examples.html                                    */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
@@ -70,27 +70,31 @@ Sha1.hash = function(msg) {
         // 2 - initialise five working variables a, b, c, d, e with previous hash value
         a = H0; b = H1; c = H2; d = H3; e = H4;
 
-        // 3 - main loop
+        // 3 - main loop (use JavaScript '>>> 0' to emulate UInt32 variables)
         for (var t=0; t<80; t++) {
             var s = Math.floor(t/20); // seq for blocks of 'f' functions and 'K' constants
-            var T = (Sha1.ROTL(a,5) + Sha1.f(s,b,c,d) + e + K[s] + W[t]) & 0xffffffff;
+            var T = (Sha1.ROTL(a,5) + Sha1.f(s,b,c,d) + e + K[s] + W[t]) >>> 0;
             e = d;
             d = c;
-            c = Sha1.ROTL(b, 30);
+            c = Sha1.ROTL(b, 30) >>> 0;
             b = a;
             a = T;
         }
 
-        // 4 - compute the new intermediate hash value (note 'addition modulo 2^32')
-        H0 = (H0+a) & 0xffffffff;
-        H1 = (H1+b) & 0xffffffff;
-        H2 = (H2+c) & 0xffffffff;
-        H3 = (H3+d) & 0xffffffff;
-        H4 = (H4+e) & 0xffffffff;
+        // 4 - compute the new intermediate hash value (note 'addition modulo 2^32' – JavaScript
+        // '>>> 0' coerces to unsigned UInt32 which achieves modulo 2^32 addition)
+        H0 = (H0+a) >>> 0;
+        H1 = (H1+b) >>> 0;
+        H2 = (H2+c) >>> 0;
+        H3 = (H3+d) >>> 0;
+        H4 = (H4+e) >>> 0;
     }
 
-    return Sha1.toHexStr(H0) + Sha1.toHexStr(H1) + Sha1.toHexStr(H2) +
-           Sha1.toHexStr(H3) + Sha1.toHexStr(H4);
+    // convert H0..H4 to hex strings (with leading zeros)
+    var hash = [ H0, H1, H2, H3, H4 ];
+    for (var h=0; h<hash.length; h++) hash[h] = ('00000000'+hash[h].toString(16)).slice(-8);
+
+    return hash.join('');
 };
 
 
@@ -113,19 +117,6 @@ Sha1.f = function(s, x, y, z)  {
  */
 Sha1.ROTL = function(x, n) {
     return (x<<n) | (x>>>(32-n));
-};
-
-
-/**
- * Hexadecimal representation of a number.
- * @private
- */
-Sha1.toHexStr = function(n) {
-    // note can't use toString(16) as it is implementation-dependant,
-    // and in IE returns signed numbers when used on full words
-    var s='', v;
-    for (var i=7; i>=0; i--) { v = (n>>>(i*4)) & 0xf; s += v.toString(16); }
-    return s;
 };
 
 

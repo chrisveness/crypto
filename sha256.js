@@ -1,6 +1,6 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/*  SHA-256 implementation in JavaScript                (c) Chris Veness 2002-2014 / MIT Licence  */
-/*                                                                                                */
+/*  SHA-256 implementation in JavaScript                              (c) Chris Veness 2002-2016  */
+/*                                                                                   MIT Licence  */
 /*  - see http://csrc.nist.gov/groups/ST/toolkit/secure_hashing.html                              */
 /*        http://csrc.nist.gov/groups/ST/toolkit/examples.html                                    */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
@@ -70,7 +70,7 @@ Sha256.hash = function(msg) {
 
         // 1 - prepare message schedule 'W'
         for (var t=0;  t<16; t++) W[t] = M[i][t];
-        for (var t=16; t<64; t++) W[t] = (Sha256.σ1(W[t-2]) + W[t-7] + Sha256.σ0(W[t-15]) + W[t-16]) & 0xffffffff;
+        for (var t=16; t<64; t++) W[t] = (Sha256.σ1(W[t-2]) + W[t-7] + Sha256.σ0(W[t-15]) + W[t-16]) >>> 0;
 
         // 2 - initialise working variables a, b, c, d, e, f, g, h with previous hash value
         a = H[0]; b = H[1]; c = H[2]; d = H[3]; e = H[4]; f = H[5]; g = H[6]; h = H[7];
@@ -82,25 +82,29 @@ Sha256.hash = function(msg) {
             h = g;
             g = f;
             f = e;
-            e = (d + T1) & 0xffffffff;
+            e = (d + T1) >>> 0;
             d = c;
             c = b;
             b = a;
-            a = (T1 + T2) & 0xffffffff;
+            a = (T1 + T2) >>> 0;
         }
-         // 4 - compute the new intermediate hash value (note 'addition modulo 2^32')
-        H[0] = (H[0]+a) & 0xffffffff;
-        H[1] = (H[1]+b) & 0xffffffff;
-        H[2] = (H[2]+c) & 0xffffffff;
-        H[3] = (H[3]+d) & 0xffffffff;
-        H[4] = (H[4]+e) & 0xffffffff;
-        H[5] = (H[5]+f) & 0xffffffff;
-        H[6] = (H[6]+g) & 0xffffffff;
-        H[7] = (H[7]+h) & 0xffffffff;
+
+        // 4 - compute the new intermediate hash value (note 'addition modulo 2^32' – JavaScript
+        // '>>> 0' coerces to unsigned UInt32 which achieves modulo 2^32 addition)
+        H[0] = (H[0]+a) >>> 0;
+        H[1] = (H[1]+b) >>> 0;
+        H[2] = (H[2]+c) >>> 0;
+        H[3] = (H[3]+d) >>> 0;
+        H[4] = (H[4]+e) >>> 0;
+        H[5] = (H[5]+f) >>> 0;
+        H[6] = (H[6]+g) >>> 0;
+        H[7] = (H[7]+h) >>> 0;
     }
 
-    return Sha256.toHexStr(H[0]) + Sha256.toHexStr(H[1]) + Sha256.toHexStr(H[2]) + Sha256.toHexStr(H[3]) +
-           Sha256.toHexStr(H[4]) + Sha256.toHexStr(H[5]) + Sha256.toHexStr(H[6]) + Sha256.toHexStr(H[7]);
+    // convert H0..H4 to hex strings (with leading zeros)
+    for (var h=0; h<H.length; h++) H[h] = ('00000000'+H[h].toString(16)).slice(-8);
+
+    return H.join('');
 };
 
 
@@ -122,19 +126,6 @@ Sha256.σ0  = function(x) { return Sha256.ROTR(7,  x) ^ Sha256.ROTR(18, x) ^ (x>
 Sha256.σ1  = function(x) { return Sha256.ROTR(17, x) ^ Sha256.ROTR(19, x) ^ (x>>>10); };
 Sha256.Ch  = function(x, y, z) { return (x & y) ^ (~x & z); };
 Sha256.Maj = function(x, y, z) { return (x & y) ^ (x & z) ^ (y & z); };
-
-
-/**
- * Hexadecimal representation of a number.
- * @private
- */
-Sha256.toHexStr = function(n) {
-    // note can't use toString(16) as it is implementation-dependant,
-    // and in IE returns signed numbers when used on full words
-    var s='', v;
-    for (var i=7; i>=0; i--) { v = (n>>>(i*4)) & 0xf; s += v.toString(16); }
-    return s;
-};
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
