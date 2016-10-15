@@ -5,7 +5,7 @@
     "author": "Chris Veness",
     "version": "0.0.0",
     "scripts": {
-        "test": "mocha test.js",
+        "test": "mocha test/*.js",
         "lint": "eslint *.js"
     },
     "devDependencies": {
