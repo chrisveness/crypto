@@ -143,9 +143,9 @@ Tea.strToLongs = function(s) {
         // note little-endian encoding - endianness is irrelevant as long as it matches longsToStr()
         l[i] = s.charCodeAt(i*4)        + (s.charCodeAt(i*4+1)<<8) +
               (s.charCodeAt(i*4+2)<<16) + (s.charCodeAt(i*4+3)<<24);
-    }
-    return l; // note running off the end of the string generates nulls since bitwise operators
-};            // treat NaN as 0
+    } // note running off the end of the string generates nulls since bitwise operators treat NaN as 0
+    return l;
+};
 
 
 /**
@@ -153,11 +153,11 @@ Tea.strToLongs = function(s) {
  * @private
  */
 Tea.longsToStr = function(l) {
-    var a = new Array(l.length);
+    var str = '';
     for (var i=0; i<l.length; i++) {
-        a[i] = String.fromCharCode(l[i] & 0xFF, l[i]>>>8 & 0xFF, l[i]>>>16 & 0xFF, l[i]>>>24 & 0xFF);
+        str += String.fromCharCode(l[i] & 0xFF, l[i]>>>8 & 0xFF, l[i]>>>16 & 0xFF, l[i]>>>24 & 0xFF);
     }
-    return a.join('');  // use Array.join() for better performance than repeated string appends
+    return str;
 };
 
 
