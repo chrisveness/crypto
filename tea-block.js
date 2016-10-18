@@ -1,11 +1,11 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/*  Block TEA (xxtea) Tiny Encryption Algorithm         (c) Chris Veness 2002-2014 / MIT Licence  */
-/*   - www.movable-type.co.uk/scripts/tea-block.html                                              */
+/* Block TEA (xxtea) Tiny Encryption Algorithm                        (c) Chris Veness 2002-2016  */
+/*  - www.movable-type.co.uk/scripts/tea-block.html                                  MIT Licence  */
 /*                                                                                                */
-/*  Algorithm: David Wheeler & Roger Needham, Cambridge University Computer Lab                   */
-/*             http://www.cl.cam.ac.uk/ftp/papers/djw-rmn/djw-rmn-tea.html (1994)                 */
-/*             http://www.cl.cam.ac.uk/ftp/users/djw3/xtea.ps (1997)                              */
-/*             http://www.cl.cam.ac.uk/ftp/users/djw3/xxtea.ps (1998)                             */
+/* Algorithm: David Wheeler & Roger Needham, Cambridge University Computer Lab                    */
+/*            http://www.cl.cam.ac.uk/ftp/papers/djw-rmn/djw-rmn-tea.html (1994)                  */
+/*            http://www.cl.cam.ac.uk/ftp/users/djw3/xtea.ps (1997)                               */
+/*            http://www.cl.cam.ac.uk/ftp/users/djw3/xxtea.ps (1998)                              */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 'use strict';
@@ -33,9 +33,9 @@ Tea.encrypt = function(plaintext, password) {
     if (plaintext.length == 0) return('');  // nothing to encrypt
 
     //  v is n-word data vector; converted to array of longs from UTF-8 string
-    var v = Tea.strToLongs(plaintext.utf8Encode());
+    var v = Tea.strToLongs(Tea.utf8Encode(plaintext));
     //  k is 4-word key; simply convert first 16 chars of password as key
-    var k = Tea.strToLongs(password.utf8Encode().slice(0,16));
+    var k = Tea.strToLongs(Tea.utf8Encode(password).slice(0,16));
 
     v = Tea.encode(v, k);
 
@@ -43,7 +43,7 @@ Tea.encrypt = function(plaintext, password) {
     var ciphertext = Tea.longsToStr(v);
 
     // convert binary string to base64 ascii for safe transport
-    return ciphertext.base64Encode();
+    return Tea.base64Encode(ciphertext);
 };
 
 
@@ -53,6 +53,7 @@ Tea.encrypt = function(plaintext, password) {
  * @param   {string} ciphertext - String to be decrypted.
  * @param   {string} password - Password to be used for decryption (1st 16 chars).
  * @returns {string} Decrypted text.
+ * @throws  {Error}  Invalid ciphertext
  */
 Tea.decrypt = function(ciphertext, password) {
     ciphertext = String(ciphertext);
@@ -61,9 +62,9 @@ Tea.decrypt = function(ciphertext, password) {
     if (ciphertext.length == 0) return('');
 
     //  v is n-word data vector; converted to array of longs from base64 string
-    var v = Tea.strToLongs(ciphertext.base64Decode());
+    var v = Tea.strToLongs(Tea.base64Decode(ciphertext));
     //  k is 4-word key; simply convert first 16 chars of password as key
-    var k = Tea.strToLongs(password.utf8Encode().slice(0,16));
+    var k = Tea.strToLongs(Tea.utf8Encode(password).slice(0,16));
 
     v = Tea.decode(v, k);
 
@@ -72,7 +73,7 @@ Tea.decrypt = function(ciphertext, password) {
     // strip trailing null chars resulting from filling 4-char blocks:
     plaintext = plaintext.replace(/\0+$/,'');
 
-    return plaintext.utf8Decode();
+    return Tea.utf8Decode(plaintext);
 };
 
 
@@ -163,45 +164,46 @@ Tea.longsToStr = function(l) {
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 
-/** Extend String object with method to encode multi-byte string to utf8
- *  - monsur.hossa.in/2012/07/20/utf-8-in-javascript.html */
-if (typeof String.prototype.utf8Encode == 'undefined') {
-    String.prototype.utf8Encode = function() {
-        return unescape( encodeURIComponent( this ) );
-    };
-}
+/**
+ * Encodes multi-byte string to utf8 - monsur.hossa.in/2012/07/20/utf-8-in-javascript.html
+ */
+Tea.utf8Encode = function(str) {
+    return unescape(encodeURIComponent(str));
+};
 
-/** Extend String object with method to decode utf8 string to multi-byte */
-if (typeof String.prototype.utf8Decode == 'undefined') {
-    String.prototype.utf8Decode = function() {
-        try {
-            return decodeURIComponent( escape( this ) );
-        } catch (e) {
-            return this; // invalid UTF-8? return as-is
-        }
-    };
-}
+/**
+ * Decodes utf8 string to multi-byte
+ */
+Tea.utf8Decode = function(utf8Str) {
+    try {
+        return decodeURIComponent(escape(utf8Str));
+    } catch (e) {
+        return utf8Str; // invalid UTF-8? return as-is
+    }
+};
 
 
-/** Extend String object with method to encode base64
- *  - developer.mozilla.org/en-US/docs/Web/API/window.btoa, nodejs.org/api/buffer.html
- *  note: if btoa()/atob() are not available (eg IE9-), try github.com/davidchambers/Base64.js */
-if (typeof String.prototype.base64Encode == 'undefined') {
-    String.prototype.base64Encode = function() {
-        if (typeof btoa != 'undefined') return btoa(this); // browser
-        if (typeof Buffer != 'undefined') return new Buffer(this, 'binary').toString('base64'); // Node.js
-        throw new Error('No Base64 Encode');
-    };
-}
+/**
+ * Encodes base64 - developer.mozilla.org/en-US/docs/Web/API/window.btoa, nodejs.org/api/buffer.html
+ */
+Tea.base64Encode = function(str) {
+    if (typeof btoa != 'undefined') return btoa(str); // browser
+    if (typeof Buffer != 'undefined') return new Buffer(str, 'binary').toString('base64'); // Node.js
+    throw new Error('No Base64 Encode');
+};
 
-/** Extend String object with method to decode base64 */
-if (typeof String.prototype.base64Decode == 'undefined') {
-    String.prototype.base64Decode = function() {
-        if (typeof atob != 'undefined') return atob(this); // browser
-        if (typeof Buffer != 'undefined') return new Buffer(this, 'base64').toString('binary'); // Node.js
-        throw new Error('No Base64 Decode');
-    };
-}
+/**
+ * Decodes base64
+ */
+Tea.base64Decode = function(b64Str) {
+    if (typeof atob == 'undefined' && typeof Buffer == 'undefined') throw new Error('No base64 decode');
+    try {
+        if (typeof atob != 'undefined') return atob(b64Str); // browser
+        if (typeof Buffer != 'undefined') return new Buffer(b64Str, 'base64').toString('binary'); // Node.js
+    } catch (e) {
+        throw new Error('Invalid ciphertext');
+    }
+};
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
