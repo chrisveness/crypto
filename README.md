@@ -56,6 +56,18 @@ This comprises:
 
 More details are available at www.movable-type.co.uk/scripts/sha256.html.
 
+sha512.js
+---------
+
+This is a reference implementation of the algorithm described in the FIPS-180-4 standard. It implements
+the standard very closely, in order to aid in understanding the standard and the algorithm itself.
+
+This comprises:
+
+- `hash`: takes a (Unicode) string and generates a hash (of the UTF-8 encoded string)
+
+More details are available at www.movable-type.co.uk/scripts/sha512.html.
+
 
 tea-block.js
 ------------
