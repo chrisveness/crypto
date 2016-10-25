@@ -30,7 +30,7 @@ var Sha256 = {};
  * @param   {string} [options.msgFormat=string] - Message format: 'string' for JavaScript string
  *   (gets converted to UTF-8 for hashing); 'hex-bytes' for string of hex bytes ('616263' ≡ 'abc') .
  * @param   {string} [options.outFormat=hex] - Output format: 'hex' for string of contiguous
- *   hex bytes; 'hex-8' for grouping hex bytes into groups of (4 byte / 8 character) words.
+ *   hex bytes; 'hex-w' for grouping hex bytes into groups of (4 byte / 8 character) words.
  * @returns {string} Hash of msg as hex character string.
  */
 Sha256.hash = function(msg, options) {
@@ -128,7 +128,7 @@ Sha256.hash = function(msg, options) {
     for (var h=0; h<H.length; h++) H[h] = ('00000000'+H[h].toString(16)).slice(-8);
 
     // concatenate H0..H7, with separator if required
-    var separator = opt.outFormat=='hex-8' ? ' ' : '';
+    var separator = opt.outFormat=='hex-w' ? ' ' : '';
 
     return H.join(separator);
 };
