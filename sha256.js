@@ -120,7 +120,7 @@ Sha256.hash = function(msg, options) {
     for (var h=0; h<H.length; h++) H[h] = ('00000000'+H[h].toString(16)).slice(-8);
 
     // concatenate H0..H4, with separator if required
-    const separator = opt.outFormat=='hex-8' ? ' ' : '';
+    var separator = opt.outFormat=='hex-8' ? ' ' : '';
 
     return H.join(separator);
 };
@@ -162,8 +162,8 @@ Sha256.utf8Encode = function(str) {
  */
 Sha256.hexBytesToString = function(hexStr) {
     hexStr = hexStr.replace(' ', ''); // allow space-separated groups
-    let str = '';
-    for (let i=0; i<hexStr.length; i+=2) {
+    var str = '';
+    for (var i=0; i<hexStr.length; i+=2) {
         str += String.fromCharCode(parseInt(hexStr.slice(i, i+2), 16));
     }
     return str;
