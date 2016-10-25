@@ -1,6 +1,8 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/*  SHA-1 implementation in JavaScript                                (c) Chris Veness 2002-2016  */
+/* SHA-1 (FIPS 180-4) implementation in JavaScript                    (c) Chris Veness 2002-2016  */
 /*                                                                                   MIT Licence  */
+/* www.movable-type.co.uk/scripts/sha1.html                                                       */
+/*                                                                                                */
 /*  - see http://csrc.nist.gov/groups/ST/toolkit/secure_hashing.html                              */
 /*        http://csrc.nist.gov/groups/ST/toolkit/examples.html                                    */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
@@ -10,6 +12,10 @@
 
 /**
  * SHA-1 hash function reference implementation.
+ *
+ * This is a direct implementation of FIPS 180-4, without any optimisations. It is intended to aid
+ * understanding of the algorithm rather than for production use, though it could be used where
+ * performance is not critical.
  *
  * @namespace
  */
@@ -24,7 +30,7 @@ var Sha1 = {};
  * @param   {string} [options.msgFormat=string] - Message format: 'string' for JavaScript string
  *   (gets converted to UTF-8 for hashing); 'hex-bytes' for string of hex bytes ('616263' ≡ 'abc') .
  * @param   {string} [options.outFormat=hex] - Output format: 'hex' for string of contiguous
- *   hex bytes; 'hex-8' for grouping hex bytes into groups of 8 bytes (16 characters).
+ *   hex bytes; 'hex-8' for grouping hex bytes into groups of (4 byte / 8 character) words.
  * @returns {string} Hash of msg as hex character string.
  */
 Sha1.hash = function(msg, options) {
@@ -32,19 +38,18 @@ Sha1.hash = function(msg, options) {
     var opt = Object.assign(defaults, options);
 
     switch (opt.msgFormat) {
-        default:
-        case 'string':  // convert string to UTF-8, as SHA only deals with byte-streams
-            msg = Sha1.utf8Encode(msg);
-            break;
-        case 'hex-bytes':
-            msg = Sha1.hexBytesToString(msg);
-            break;
+        default: // default is to convert string to UTF-8, as SHA only deals with byte-streams
+        case 'string':   msg = Sha1.utf8Encode(msg);       break;
+        case 'hex-bytes':msg = Sha1.hexBytesToString(msg); break; // mostly for running tests
     }
 
     // constants [§4.2.1]
     var K = [ 0x5a827999, 0x6ed9eba1, 0x8f1bbcdc, 0xca62c1d6 ];
 
-    // PREPROCESSING
+    // initial hash value [§5.3.1]
+    var H = [ 0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476, 0xc3d2e1f0 ];
+
+    // PREPROCESSING [§6.1.1]
 
     msg += String.fromCharCode(0x80);  // add trailing '1' bit (+ 0's padding) to string [§5.1.1]
 
@@ -65,9 +70,6 @@ Sha1.hash = function(msg, options) {
     // bitwise-op args to 32 bits, we need to simulate this by arithmetic operators
     M[N-1][14] = ((msg.length-1)*8) / Math.pow(2, 32); M[N-1][14] = Math.floor(M[N-1][14]);
     M[N-1][15] = ((msg.length-1)*8) & 0xffffffff;
-
-    // set initial hash value [§5.3.1]
-    var H = [ 0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476, 0xc3d2e1f0 ];
 
     // HASH COMPUTATION [§6.1.2]
 
