@@ -82,5 +82,5 @@ Browser support
 ---------------
 
 IE9- doesn’t have btoa()/atob(): if you need to support IE9- 
-([no!](http://venturebeat.com/2016/01/12/microsoft-ends-support-for-ie8-ie9-ie10-and-windows-8/)), 
-you can use David Chambers’ [Base64 polyfill](https://github.com/davidchambers/Base64.js).
+([no!](https://www.microsoft.com/en-gb/WindowsForBusiness/End-of-IE-support)), you can use David 
+Chambers’ [Base64 polyfill](https://github.com/davidchambers/Base64.js).
