@@ -54,6 +54,9 @@ This comprises:
 
 - `hash`: takes a (Unicode) string and generates a hash (of the UTF-8 encoded string)
 
+Note that while SHA-256 and SHA-512 are both members of the SHA-2 family, there is little common
+code, so they are in separate files here.
+
 More details are available at www.movable-type.co.uk/scripts/sha256.html.
 
 sha512.js
@@ -66,7 +69,25 @@ This comprises:
 
 - `hash`: takes a (Unicode) string and generates a hash (of the UTF-8 encoded string)
 
+Note that while SHA-256 and SHA-512 are both members of the SHA-2 family, there is little common
+code, so they are in separate files here.
+
 More details are available at www.movable-type.co.uk/scripts/sha512.html.
+
+sha3.js
+-------
+
+This is a reference implementation of the algorithm described in the FIPS-202 standard. It implements
+the standard very closely, in order to aid in understanding the standard and the algorithm itself.
+
+This comprises:
+
+- `hash224`: takes a (Unicode) string and generates a SHA3/224 hash (of the UTF-8 encoded string)
+- `hash256`: takes a (Unicode) string and generates a SHA3/256 hash (of the UTF-8 encoded string)
+- `hash384`: takes a (Unicode) string and generates a SHA3/384 hash (of the UTF-8 encoded string)
+- `hash512`: takes a (Unicode) string and generates a SHA3/512 hash (of the UTF-8 encoded string)
+
+More details are available at www.movable-type.co.uk/scripts/sha3.html.
 
 
 tea-block.js
