@@ -1,13 +1,18 @@
 crypto
 ======
 
-Libraries of cryptographic functions implemented in JavaScript.
+Reference implementations of AES & SHA cryptographic functions in JavaScript.
+
+These annotated implementations follow the standards very closely, in order to assist in studying 
+the standards and underlying algorithms. Note for production use I would recommend the
+[Web Cryptography API](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto) for the browser, 
+or the [crypto](https://nodejs.org/api/crypto.html) library in Node.js.
 
 aes.js
 ------
 
-This is a reference implementation of the algorithm described in the FIPS-197 standard. It implements
-the standard very closely, in order to aid in understanding the standard and the algorithm itself.
+This is a reference implementation of the AES (Rijndael cipher) algorithm described in the FIPS-197 
+standard.
 
 This comprises:
 
@@ -35,8 +40,7 @@ More details are available at www.movable-type.co.uk/scripts/aes.html.
 sha1.js
 -------
 
-This is a reference implementation of the algorithm described in the FIPS-180-4 standard. It implements
-the standard very closely, in order to aid in understanding the standard and the algorithm itself.
+This is a reference implementation of the SHA-1 algorithm described in the FIPS-180-4 standard.
 
 This comprises:
 
@@ -47,8 +51,7 @@ More details are available at www.movable-type.co.uk/scripts/sha1.html.
 sha256.js
 ---------
 
-This is a reference implementation of the algorithm described in the FIPS-180-4 standard. It implements
-the standard very closely, in order to aid in understanding the standard and the algorithm itself.
+This is a reference implementation of the SHA-256 algorithm described in the FIPS-180-4 standard.
 
 This comprises:
 
@@ -62,8 +65,7 @@ More details are available at www.movable-type.co.uk/scripts/sha256.html.
 sha512.js
 ---------
 
-This is a reference implementation of the algorithm described in the FIPS-180-4 standard. It implements
-the standard very closely, in order to aid in understanding the standard and the algorithm itself.
+This is a reference implementation of the SHA-512 algorithm described in the FIPS-180-4 standard.
 
 This comprises:
 
@@ -77,8 +79,7 @@ More details are available at www.movable-type.co.uk/scripts/sha512.html.
 sha3.js
 -------
 
-This is a reference implementation of the algorithm described in the FIPS-202 standard. It implements
-the standard very closely, in order to aid in understanding the standard and the algorithm itself.
+This is a reference implementation of the SHA-3 (Keccak) algorithm described in the FIPS-202 standard.
 
 This comprises:
 
@@ -111,9 +112,17 @@ Documentation
 
 Documentation for all these methods is available at www.movable-type.co.uk/scripts/js/crypto/docs.
 
-Browser support
----------------
+JavaScript
+----------
 
-IE9- doesn’t have btoa()/atob(): if you need to support IE9- 
-([no!](https://www.microsoft.com/en-gb/WindowsForBusiness/End-of-IE-support)), you can use David 
-Chambers’ [Base64 polyfill](https://github.com/davidchambers/Base64.js).
+Cryptographically-speaking, browsers are 
+[inherently](//www.nccgroup.trust/us/about-us/newsroom-and-events/blog/2011/august/javascript-cryptography-considered-harmful)
+[insecure](//tonyarcieri.com/whats-wrong-with-webcrypto) (Node.js does not suffer the same problems),
+but these implementations are intended for study rather than production use. With its untyped C-style 
+syntax, JavaScript reads remarkably close to pseudo-code: exposing the algorithms with a minimum of 
+syntactic distractions.
+
+These implementations are written in ES2015 version of JavaScript; ES2015 `class`es are both clearer
+and more familiar to users of other languages than the ES5 equivalents, and `let` and `const` are
+good practice and communicate intent better than `var`. Other idiomatic JavaScript which might be 
+less familiar to users of other languages has generally been avoided.

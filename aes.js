@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* AES implementation in JavaScript                                   (c) Chris Veness 2005-2016  */
+/* AES implementation in JavaScript                                   (c) Chris Veness 2005-2017  */
 /*                                                                                   MIT Licence  */
 /* www.movable-type.co.uk/scripts/aes.html                                                        */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
@@ -8,171 +8,184 @@
 
 
 /**
- * AES (Rijndael cipher) encryption routines,
+ * AES (Rijndael cipher) encryption routines reference implementation,
  *
- * Reference implementation of FIPS-197 http://csrc.nist.gov/publications/fips/fips197/fips-197.pdf.
+ * This is an annotated direct implementation of FIPS 197, without any optimisations. It is
+ * intended to aid understanding of the algorithm rather than for production use.
  *
- * @namespace
+ * While it could be used where performance is not critical, I would recommend using the ‘Web
+ * Cryptography API’ (developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/encrypt) for the browser,
+ * or the ‘crypto’ library (nodejs.org/api/crypto.html#crypto_class_cipher) in Node.js.
+ *
+ * See csrc.nist.gov/publications/fips/fips197/fips-197.pdf
  */
-var Aes = {};
+class Aes {
 
+    /**
+     * AES Cipher function: encrypt 'input' state with Rijndael algorithm [§5.1];
+     *   applies Nr rounds (10/12/14) using key schedule w for 'add round key' stage.
+     *
+     * @param   {number[]}   input - 16-byte (128-bit) input state array.
+     * @param   {number[][]} w - Key schedule as 2D byte-array (Nr+1 × Nb bytes).
+     * @returns {number[]}   Encrypted output state array.
+     */
+    static cipher(input, w) {
+        const Nb = 4;               // block size (in words): no of columns in state (fixed at 4 for AES)
+        const Nr = w.length/Nb - 1; // no of rounds: 10/12/14 for 128/192/256-bit keys
 
-/**
- * AES Cipher function: encrypt 'input' state with Rijndael algorithm [§5.1];
- *   applies Nr rounds (10/12/14) using key schedule w for 'add round key' stage.
- *
- * @param   {number[]}   input - 16-byte (128-bit) input state array.
- * @param   {number[][]} w - Key schedule as 2D byte-array (Nr+1 x Nb bytes).
- * @returns {number[]}   Encrypted output state array.
- */
-Aes.cipher = function(input, w) {
-    var Nb = 4;               // block size (in words): no of columns in state (fixed at 4 for AES)
-    var Nr = w.length/Nb - 1; // no of rounds: 10/12/14 for 128/192/256-bit keys
+        let state = [ [], [], [], [] ];  // initialise 4×Nb byte-array 'state' with input [§3.4]
+        for (let i=0; i<4*Nb; i++) state[i%4][Math.floor(i/4)] = input[i];
 
-    var state = [ [], [], [], [] ];  // initialise 4xNb byte-array 'state' with input [§3.4]
-    for (var i=0; i<4*Nb; i++) state[i%4][Math.floor(i/4)] = input[i];
+        state = Aes.addRoundKey(state, w, 0, Nb);
 
-    state = Aes.addRoundKey(state, w, 0, Nb);
+        for (let round=1; round<Nr; round++) {
+            state = Aes.subBytes(state, Nb);
+            state = Aes.shiftRows(state, Nb);
+            state = Aes.mixColumns(state, Nb);
+            state = Aes.addRoundKey(state, w, round, Nb);
+        }
 
-    for (var round=1; round<Nr; round++) {
         state = Aes.subBytes(state, Nb);
         state = Aes.shiftRows(state, Nb);
-        state = Aes.mixColumns(state, Nb);
-        state = Aes.addRoundKey(state, w, round, Nb);
+        state = Aes.addRoundKey(state, w, Nr, Nb);
+
+        const output = new Array(4*Nb);  // convert state to 1-d array before returning [§3.4]
+        for (let i=0; i<4*Nb; i++) output[i] = state[i%4][Math.floor(i/4)];
+
+        return output;
     }
 
-    state = Aes.subBytes(state, Nb);
-    state = Aes.shiftRows(state, Nb);
-    state = Aes.addRoundKey(state, w, Nr, Nb);
 
-    var output = new Array(4*Nb);  // convert state to 1-d array before returning [§3.4]
-    for (var i=0; i<4*Nb; i++) output[i] = state[i%4][Math.floor(i/4)];
+    /**
+     * Perform key expansion to generate a key schedule from a cipher key [§5.2].
+     *
+     * @param   {number[]}   key - Cipher key as 16/24/32-byte array.
+     * @returns {number[][]} Expanded key schedule as 2D byte-array (Nr+1 × Nb bytes).
+     */
+    static keyExpansion(key) {
+        const Nb = 4;            // block size (in words): no of columns in state (fixed at 4 for AES)
+        const Nk = key.length/4; // key length (in words): 4/6/8 for 128/192/256-bit keys
+        const Nr = Nk + 6;       // no of rounds: 10/12/14 for 128/192/256-bit keys
 
-    return output;
-};
+        const w = new Array(Nb*(Nr+1));
+        let temp = new Array(4);
 
-
-/**
- * Perform key expansion to generate a key schedule from a cipher key [§5.2].
- *
- * @param   {number[]}   key - Cipher key as 16/24/32-byte array.
- * @returns {number[][]} Expanded key schedule as 2D byte-array (Nr+1 x Nb bytes).
- */
-Aes.keyExpansion = function(key) {
-    var Nb = 4;            // block size (in words): no of columns in state (fixed at 4 for AES)
-    var Nk = key.length/4; // key length (in words): 4/6/8 for 128/192/256-bit keys
-    var Nr = Nk + 6;       // no of rounds: 10/12/14 for 128/192/256-bit keys
-
-    var w = new Array(Nb*(Nr+1));
-    var temp = new Array(4);
-
-    // initialise first Nk words of expanded key with cipher key
-    for (var i=0; i<Nk; i++) {
-        var r = [ key[4*i], key[4*i+1], key[4*i+2], key[4*i+3] ];
-        w[i] = r;
-    }
-
-    // expand the key into the remainder of the schedule
-    for (var i=Nk; i<(Nb*(Nr+1)); i++) {
-        w[i] = new Array(4);
-        for (var t=0; t<4; t++) temp[t] = w[i-1][t];
-        // each Nk'th word has extra transformation
-        if (i % Nk == 0) {
-            temp = Aes.subWord(Aes.rotWord(temp));
-            for (var t=0; t<4; t++) temp[t] ^= Aes.rCon[i/Nk][t];
+        // initialise first Nk words of expanded key with cipher key
+        for (let i=0; i<Nk; i++) {
+            const r = [ key[4*i], key[4*i+1], key[4*i+2], key[4*i+3] ];
+            w[i] = r;
         }
-        // 256-bit key has subWord applied every 4th word
-        else if (Nk > 6 && i%Nk == 4) {
-            temp = Aes.subWord(temp);
+
+        // expand the key into the remainder of the schedule
+        for (let i=Nk; i<(Nb*(Nr+1)); i++) {
+            w[i] = new Array(4);
+            for (let t=0; t<4; t++) temp[t] = w[i-1][t];
+            // each Nk'th word has extra transformation
+            if (i % Nk == 0) {
+                temp = Aes.subWord(Aes.rotWord(temp));
+                for (let t=0; t<4; t++) temp[t] ^= Aes.rCon[i/Nk][t];
+            }
+            // 256-bit key has subWord applied every 4th word
+            else if (Nk > 6 && i%Nk == 4) {
+                temp = Aes.subWord(temp);
+            }
+            // xor w[i] with w[i-1] and w[i-Nk]
+            for (let t=0; t<4; t++) w[i][t] = w[i-Nk][t] ^ temp[t];
         }
-        // xor w[i] with w[i-1] and w[i-Nk]
-        for (var t=0; t<4; t++) w[i][t] = w[i-Nk][t] ^ temp[t];
+
+        return w;
     }
 
-    return w;
-};
 
-
-/**
- * Apply SBox to state S [§5.1.1]
- * @private
- */
-Aes.subBytes = function(s, Nb) {
-    for (var r=0; r<4; r++) {
-        for (var c=0; c<Nb; c++) s[r][c] = Aes.sBox[s[r][c]];
-    }
-    return s;
-};
-
-
-/**
- * Shift row r of state S left by r bytes [§5.1.2]
- * @private
- */
-Aes.shiftRows = function(s, Nb) {
-    var t = new Array(4);
-    for (var r=1; r<4; r++) {
-        for (var c=0; c<4; c++) t[c] = s[r][(c+r)%Nb];  // shift into temp copy
-        for (var c=0; c<4; c++) s[r][c] = t[c];         // and copy back
-    }          // note that this will work for Nb=4,5,6, but not 7,8 (always 4 for AES):
-    return s;  // see asmaes.sourceforge.net/rijndael/rijndaelImplementation.pdf
-};
-
-
-/**
- * Combine bytes of each col of state S [§5.1.3]
- * @private
- */
-Aes.mixColumns = function(s, Nb) {
-    for (var c=0; c<4; c++) {
-        var a = new Array(4);  // 'a' is a copy of the current column from 's'
-        var b = new Array(4);  // 'b' is a•{02} in GF(2^8)
-        for (var i=0; i<4; i++) {
-            a[i] = s[i][c];
-            b[i] = s[i][c]&0x80 ? s[i][c]<<1 ^ 0x011b : s[i][c]<<1;
+    /**
+     * Apply SBox to state S [§5.1.1].
+     *
+     * @private
+     */
+    static subBytes(s, Nb) {
+        for (let r=0; r<4; r++) {
+            for (let c=0; c<Nb; c++) s[r][c] = Aes.sBox[s[r][c]];
         }
-        // a[n] ^ b[n] is a•{03} in GF(2^8)
-        s[0][c] = b[0] ^ a[1] ^ b[1] ^ a[2] ^ a[3]; // {02}•a0 + {03}•a1 + a2 + a3
-        s[1][c] = a[0] ^ b[1] ^ a[2] ^ b[2] ^ a[3]; // a0 • {02}•a1 + {03}•a2 + a3
-        s[2][c] = a[0] ^ a[1] ^ b[2] ^ a[3] ^ b[3]; // a0 + a1 + {02}•a2 + {03}•a3
-        s[3][c] = a[0] ^ b[0] ^ a[1] ^ a[2] ^ b[3]; // {03}•a0 + a1 + a2 + {02}•a3
+        return s;
     }
-    return s;
-};
 
 
-/**
- * Xor Round Key into state S [§5.1.4]
- * @private
- */
-Aes.addRoundKey = function(state, w, rnd, Nb) {
-    for (var r=0; r<4; r++) {
-        for (var c=0; c<Nb; c++) state[r][c] ^= w[rnd*4+c][r];
+    /**
+     * Shift row r of state S left by r bytes [§5.1.2].
+     *
+     * @private
+     */
+    static shiftRows(s, Nb) {
+        const t = new Array(4);
+        for (let r=1; r<4; r++) {
+            for (let c=0; c<4; c++) t[c] = s[r][(c+r)%Nb];  // shift into temp copy
+            for (let c=0; c<4; c++) s[r][c] = t[c];         // and copy back
+        }          // note that this will work for Nb=4,5,6, but not 7,8 (always 4 for AES):
+        return s;  // see asmaes.sourceforge.net/rijndael/rijndaelImplementation.pdf
     }
-    return state;
-};
 
 
-/**
- * Apply SBox to 4-byte word w
- * @private
- */
-Aes.subWord = function(w) {
-    for (var i=0; i<4; i++) w[i] = Aes.sBox[w[i]];
-    return w;
-};
+    /**
+     * Combine bytes of each col of state S [§5.1.3].
+     *
+     * @private
+     */
+    static mixColumns(s, Nb) {
+        for (let c=0; c<Nb; c++) {
+            const a = new Array(Nb);  // 'a' is a copy of the current column from 's'
+            const b = new Array(Nb);  // 'b' is a•{02} in GF(2^8)
+            for (let r=0; r<4; r++) {
+                a[r] = s[r][c];
+                b[r] = s[r][c]&0x80 ? s[r][c]<<1 ^ 0x011b : s[r][c]<<1;
+            }
+            // a[n] ^ b[n] is a•{03} in GF(2^8)
+            s[0][c] = b[0] ^ a[1] ^ b[1] ^ a[2] ^ a[3]; // {02}•a0 + {03}•a1 + a2 + a3
+            s[1][c] = a[0] ^ b[1] ^ a[2] ^ b[2] ^ a[3]; // a0 • {02}•a1 + {03}•a2 + a3
+            s[2][c] = a[0] ^ a[1] ^ b[2] ^ a[3] ^ b[3]; // a0 + a1 + {02}•a2 + {03}•a3
+            s[3][c] = a[0] ^ b[0] ^ a[1] ^ a[2] ^ b[3]; // {03}•a0 + a1 + a2 + {02}•a3
+        }
+        return s;
+    }
 
 
-/**
- * Rotate 4-byte word w left by one byte
- * @private
- */
-Aes.rotWord = function(w) {
-    var tmp = w[0];
-    for (var i=0; i<3; i++) w[i] = w[i+1];
-    w[3] = tmp;
-    return w;
-};
+    /**
+     * Xor Round Key into state S [§5.1.4].
+     *
+     * @private
+     */
+    static addRoundKey(state, w, rnd, Nb) {
+        for (let r=0; r<4; r++) {
+            for (let c=0; c<Nb; c++) state[r][c] ^= w[rnd*4+c][r];
+        }
+        return state;
+    }
+
+
+    /**
+     * Apply SBox to 4-byte word w.
+     *
+     * @private
+     */
+    static subWord(w) {
+        for (let i=0; i<4; i++) w[i] = Aes.sBox[w[i]];
+        return w;
+    }
+
+
+    /**
+     * Rotate 4-byte word w left by one byte.
+     *
+     * @private
+     */
+    static rotWord(w) {
+        const tmp = w[0];
+        for (let i=0; i<3; i++) w[i] = w[i+1];
+        w[3] = tmp;
+        return w;
+    }
+
+
+}
 
 
 // sBox is pre-computed multiplicative inverse in GF(2^8) used in subBytes and keyExpansion [§5.1.1]
@@ -209,4 +222,5 @@ Aes.rCon = [ [ 0x00, 0x00, 0x00, 0x00 ],
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
+
 if (typeof module != 'undefined' && module.exports) module.exports = Aes; // ≡ export default Aes

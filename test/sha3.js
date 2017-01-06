@@ -1,16 +1,16 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Crypto Test Harness - SHA-3                                             (c) Chris Veness 2016  */
+/* Crypto Test Harness - SHA-3                                        (c) Chris Veness 2016-2017  */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 'use strict';
 
-var chai = require('chai'); // BDD/TDD assertion library
-var fs   = require('fs');   // nodejs.org/api/fs.html
+const chai = require('chai'); // BDD/TDD assertion library
+const fs   = require('fs');   // nodejs.org/api/fs.html
 
-var Sha3  = require('../sha3.js');
+const Sha3  = require('../sha3.js');
 
 chai.should();
-var test = it; // just an alias
+const test = it; // just an alias
 
 
 describe('SHA-3', function() {
@@ -44,22 +44,22 @@ describe('SHA-3', function() {
 
     // UTF-8
     describe('UTF-8', function() {
-        test('☺', function() { Sha3.hash512('☺').should.equal('323dea2a28f42085c70e7bcf59fb1be710ba4e85b9d5f53a94928eed73d2e17940a17682820b7b938f2beaedb51590cfe0883d55f5cceeb7b18ff2d02c33bac0')});
+        test('☺', function() { Sha3.hash512('☺').should.equal('323dea2a28f42085c70e7bcf59fb1be710ba4e85b9d5f53a94928eed73d2e17940a17682820b7b938f2beaedb51590cfe0883d55f5cceeb7b18ff2d02c33bac0'); });
     });
 
     // csrc.nist.gov/groups/STM/cavp/secure-hashing.html#test-vectors
     describe('NIST CSRC test vectors', function() {
-        rsp('SHA3_224ShortMsg', Sha3.hash224);
-        rsp('SHA3_224LongMsg',  Sha3.hash224);
-        rsp('SHA3_256ShortMsg', Sha3.hash256);
-        rsp('SHA3_256LongMsg',  Sha3.hash256);
-        rsp('SHA3_384ShortMsg', Sha3.hash384);
-        rsp('SHA3_384LongMsg',  Sha3.hash384);
-        rsp('SHA3_512ShortMsg', Sha3.hash512);
-        rsp('SHA3_512LongMsg',  Sha3.hash512);
+        responseTestVectors('SHA3_224ShortMsg', Sha3.hash224);
+        responseTestVectors('SHA3_224LongMsg',  Sha3.hash224);
+        responseTestVectors('SHA3_256ShortMsg', Sha3.hash256);
+        responseTestVectors('SHA3_256LongMsg',  Sha3.hash256);
+        responseTestVectors('SHA3_384ShortMsg', Sha3.hash384);
+        responseTestVectors('SHA3_384LongMsg',  Sha3.hash384);
+        responseTestVectors('SHA3_512ShortMsg', Sha3.hash512);
+        responseTestVectors('SHA3_512LongMsg',  Sha3.hash512);
     });
 
-    function rsp(file, fn) {
+    function responseTestVectors(file, fn) {
         const rsp = fs.readFileSync(`./test/${file}.rsp`, 'utf8');
         const msg = rsp.split('\r\n').filter(line => line.slice(0,6) == 'Msg = ').map(line => line.slice(6));
         const md = rsp.split('\r\n').filter(line => line.slice(0,5) == 'MD = ').map(line => line.slice(5));
