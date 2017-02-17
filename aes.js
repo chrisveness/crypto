@@ -223,4 +223,4 @@ Aes.rCon = [ [ 0x00, 0x00, 0x00, 0x00 ],
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
-if (typeof module != 'undefined' && module.exports) module.exports = Aes; // ≡ export default Aes
+// module.exports = Aes; // ≡ export default Aes; uncomment to use in Node.js

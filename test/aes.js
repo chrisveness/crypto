@@ -2,6 +2,10 @@
 /*  Crypto Test Harness - AES                                         (c) Chris Veness 2014-2017  */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
+/* !! Note module.exports / require statement must be uncommented for these tests to work !!      */
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
+
 'use strict';
 
 const chai = require('chai');  // BDD/TDD assertion library

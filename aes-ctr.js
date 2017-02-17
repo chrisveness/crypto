@@ -4,9 +4,9 @@
 /* www.movable-type.co.uk/scripts/aes.html                                                        */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
-/* eslint no-var:warn *//* global WorkerGlobalScope */
+/* global WorkerGlobalScope */
 'use strict';
-if (typeof module!='undefined' && module.exports) var Aes = require('./aes.js'); // ≡ import Aes from 'aes.js'
+// const Aes = require('./aes.js'); // ≡ import Aes from 'aes.js'; uncomment to use in Node.js
 
 
 /**
@@ -228,4 +228,4 @@ class AesCtr extends Aes {
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
-if (typeof module != 'undefined' && module.exports) module.exports = AesCtr; // ≡ export default AesCtr
+// module.exports = AesCtr; // uncomment to use in Node.js
