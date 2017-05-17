@@ -5,7 +5,11 @@ Reference implementations of AES & SHA cryptographic functions in JavaScript.
 
 These annotated implementations follow the standards very closely, in order to assist in studying 
 the standards and underlying algorithms. Note for production use I would recommend the
-[Web Cryptography API](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto) for the browser, 
+[Web Cryptography API](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto) for the browser
+(*see examples of 
+[SHA hashing](https://gist.github.com/chrisveness/e5a07769d06ed02a2587df16742d3fdd),
+[PBKDF2 key derivation](https://gist.github.com/chrisveness/770ee96945ec12ac84f134bf538d89fb), and 
+[AES-GCM encryption](https://gist.github.com/chrisveness/43bcda93af9f646d083fad678071b90a)*),
 or the [crypto](https://nodejs.org/api/crypto.html) library in Node.js.
 
 aes.js
