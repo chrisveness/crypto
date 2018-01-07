@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/*  Crypto Test Harness - AES                                         (c) Chris Veness 2014-2017  */
+/*  Crypto Test Harness - AES                                         (c) Chris Veness 2014-2018  */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
@@ -10,18 +10,17 @@
 
 const chai = require('chai');  // BDD/TDD assertion library
 
-const Aes = require('../aes.js');
-Aes.Ctr = require('../aes-ctr.js');
+const Aes    = require('../aes.js');
+const AesCtr = require('../aes-ctr.js');
 
 chai.should();
-const test = it; // just an alias
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 /* AES - test vectors: csrc.nist.gov/publications/fips/fips197/fips-197.pdf C.1                   */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
-describe('aes', function() {
+describe('aes fips test vectors', function() {
     const plaintext = vectorToBytes('00 11 22 33 44 55 66 77 88 99 aa bb cc dd ee ff');
 
     const key128    = vectorToBytes('00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f');
@@ -33,23 +32,13 @@ describe('aes', function() {
     const key256    = vectorToBytes('00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f');
     const cipher256 = vectorToBytes('8e a2 b7 ca 51 67 45 bf ea fc 49 90 4b 49 60 89');
 
-    test('Aes-128-bit test vector', function() { Aes.cipher(plaintext, Aes.keyExpansion(key128)).should.eql(cipher128); });
-    test('Aes-192-bit test vector', function() { Aes.cipher(plaintext, Aes.keyExpansion(key192)).should.eql(cipher192); });
-    test('Aes-256-bit test vector', function() { Aes.cipher(plaintext, Aes.keyExpansion(key256)).should.eql(cipher256); });
+    it('encrypts Aes-128-bit test vector', function() { Aes.cipher(plaintext, Aes.keyExpansion(key128)).should.deep.equal(cipher128); });
+    it('encrypts Aes-192-bit test vector', function() { Aes.cipher(plaintext, Aes.keyExpansion(key192)).should.deep.equal(cipher192); });
+    it('encrypts Aes-256-bit test vector', function() { Aes.cipher(plaintext, Aes.keyExpansion(key256)).should.deep.equal(cipher256); });
 
-    function vectorToBytes(v) {
-        const a = v.split(/ /);
-        for (let i=0; i<a.length; i++) a[i] = parseInt('0x'+a[i]);
-        return a;
-    }
+    function vectorToBytes(v) { return v.split(/ /).map(i => parseInt('0x'+i)); }
 
-    function bytesToVector(b) {
-        const v = b.slice(); // clone b
-        for (let i=0; i<v.length; i++) {
-            v[i] = v[i]<0x10 ? '0'+v[i].toString(16) : v[i].toString(16);
-        }
-        return v.join(' ');
-    }
+    function bytesToVector(b) { return b.map(i => i<0x10 ? '0'+i.toString(16) : i.toString(16)).join(' '); }
 });
 
 
@@ -58,11 +47,55 @@ describe('aes', function() {
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 describe('aes.ctr', function() {
-    const origtext = 'My big secret סוד קצת بت سرية  ความลับบิต 位的秘密';
-    const ciphertext = Aes.Ctr.encrypt(origtext, 'pāšşŵōřđ', 256);
-    const decrtext = Aes.Ctr.decrypt(ciphertext, 'pāšşŵōřđ', 256);
+    describe('unicode plaintext/password', function() {
+        const origtext = 'My big secret סוד קצת بت سرية  ความลับบิต 位的秘密';
 
-    test('decrypted ciphertext matches original text', function() { decrtext.should.equal(origtext); });
+        const ciphertext128 = AesCtr.encrypt(origtext, 'pāšşŵōřđ', 128);
+        const decrypttext128 = AesCtr.decrypt(ciphertext128, 'pāšşŵōřđ', 128);
+        it('decrypts ciphertext to match original (unicode) text @ 128', function() { decrypttext128.should.equal(origtext); });
+
+        const ciphertext192 = AesCtr.encrypt(origtext, 'pāšşŵōřđ', 192);
+        const decrypttext192 = AesCtr.decrypt(ciphertext192, 'pāšşŵōřđ', 192);
+        it('decrypts ciphertext to match original (unicode) text @ 192', function() { decrypttext192.should.equal(origtext); });
+
+        const ciphertext256 = AesCtr.encrypt(origtext, 'pāšşŵōřđ', 256);
+        const decrypttext256 = AesCtr.decrypt(ciphertext256, 'pāšşŵōřđ', 256);
+        it('decrypts ciphertext to match original (unicode) text @ 256', function() { decrypttext256.should.equal(origtext); });
+    });
+
+    describe('various lengths of plaintext', function() {
+        const password = Date().toString();
+
+        const plaintext1 = '0';
+        it('decrypts string of 1 @ 128', function() { AesCtr.decrypt(AesCtr.encrypt(plaintext1, password, 128), password, 128) });
+        it('decrypts string of 1 @ 192', function() { AesCtr.decrypt(AesCtr.encrypt(plaintext1, password, 192), password, 192) });
+        it('decrypts string of 1 @ 256', function() { AesCtr.decrypt(AesCtr.encrypt(plaintext1, password, 256), password, 256) });
+
+        const plaintext10 = '0123456789';
+        it('decrypts string of 10 @ 128', function() { AesCtr.decrypt(AesCtr.encrypt(plaintext10, password, 128), password, 128) });
+        it('decrypts string of 10 @ 192', function() { AesCtr.decrypt(AesCtr.encrypt(plaintext10, password, 192), password, 192) });
+        it('decrypts string of 10 @ 256', function() { AesCtr.decrypt(AesCtr.encrypt(plaintext10, password, 256), password, 256) });
+
+        const plaintext100 = plaintext10.repeat(10);
+        it('decrypts string of 100 @ 128', function() { AesCtr.decrypt(AesCtr.encrypt(plaintext100, password, 128), password, 128) });
+        it('decrypts string of 100 @ 192', function() { AesCtr.decrypt(AesCtr.encrypt(plaintext100, password, 192), password, 192) });
+        it('decrypts string of 100 @ 256', function() { AesCtr.decrypt(AesCtr.encrypt(plaintext100, password, 256), password, 256) });
+
+        const plaintext1k = plaintext100.repeat(10);
+        it('decrypts string of 1k @ 128', function() { AesCtr.decrypt(AesCtr.encrypt(plaintext1k, password, 128), password, 128) });
+        it('decrypts string of 1k @ 192', function() { AesCtr.decrypt(AesCtr.encrypt(plaintext1k, password, 192), password, 192) });
+        it('decrypts string of 1k @ 256', function() { AesCtr.decrypt(AesCtr.encrypt(plaintext1k, password, 256), password, 256) });
+
+        const plaintext10k = plaintext1k.repeat(10);
+        it('decrypts string of 10k @ 128', function() { AesCtr.decrypt(AesCtr.encrypt(plaintext10k, password, 128), password, 128) });
+        it('decrypts string of 10k @ 192', function() { AesCtr.decrypt(AesCtr.encrypt(plaintext10k, password, 192), password, 192) });
+        it('decrypts string of 10k @ 256', function() { AesCtr.decrypt(AesCtr.encrypt(plaintext10k, password, 256), password, 256) });
+
+        const plaintext100k = plaintext10k.repeat(10);
+        it('decrypts string of 100k @ 128', function() { AesCtr.decrypt(AesCtr.encrypt(plaintext100k, password, 128), password, 128) });
+        it('decrypts string of 100k @ 192', function() { AesCtr.decrypt(AesCtr.encrypt(plaintext100k, password, 192), password, 192) });
+        it('decrypts string of 100k @ 256', function() { AesCtr.decrypt(AesCtr.encrypt(plaintext100k, password, 256), password, 256) });
+    });
 });
 
 
