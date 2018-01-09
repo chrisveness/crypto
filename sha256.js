@@ -1,10 +1,8 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* SHA-256 (FIPS 180-4) implementation in JavaScript                  (c) Chris Veness 2002-2017  */
+/* SHA-256 (FIPS 180-4) implementation in JavaScript                  (c) Chris Veness 2002-2018  */
 /*                                                                                   MIT Licence  */
 /* www.movable-type.co.uk/scripts/sha256.html                                                     */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-
-'use strict';
 
 
 /**
@@ -175,4 +173,4 @@ class Sha256 {
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
-if (typeof module != 'undefined' && module.exports) module.exports = Sha256; // ≡ export default Sha256
+export default Sha256;

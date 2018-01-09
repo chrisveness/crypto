@@ -5,21 +5,27 @@
     "author": "Chris Veness",
     "version": "0.0.0",
     "scripts": {
-        "test": "mocha test/*.js",
+        "test": "mocha --exit -r @std/esm test/*.js",
         "lint": "eslint *.js"
     },
     "devDependencies": {
-        "chai": "^3.5.0",
-        "eslint": "^3.12.2",
-        "mocha": "^3.2.0"
+        "@std/esm": "^0.19.1",
+        "chai": "^4.1.2",
+        "eslint": "^4.14.0",
+        "mocha": "^4.1.0"
     },
+    "@std/esm": "cjs",
     "eslintConfig": {
         "env": {
             "browser": true,
             "node": true,
+            "es6": true,
             "mocha": true
         },
-        "parserOptions": { "ecmaVersion": 2015 },
+        "parserOptions": {
+            "ecmaVersion": 2017,
+            "sourceType": "module"
+        },
         "extends": "eslint:recommended",
         "rules": {
             "array-bracket-spacing": [ "error", "always", { "singleValue": false } ],
@@ -27,7 +33,7 @@
             "curly": [ "error", "multi-line" ],
             "indent": [ "error", 4, { "SwitchCase": 1 } ],
             "key-spacing": [ "error", { "align": "value" } ],
-            "no-console": "warn",
+            "no-console": [ "warn", { "allow": [ "error", "info" ] } ],
             "no-irregular-whitespace": "warn",
             "no-redeclare": "warn",
             "no-shadow": "warn",

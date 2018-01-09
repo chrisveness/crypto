@@ -1,19 +1,14 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/*  Crypto Test Harness - AES                                         (c) Chris Veness 2014-2018  */
+/* Crypto Test Harness - AES                                          (c) Chris Veness 2014-2018  */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* !! Note module.exports / require statement must be uncommented for these tests to work !!      */
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
-'use strict';
+import Aes    from '../aes.js';
+import AesCtr from '../aes-ctr.js';
 
-const chai = require('chai');  // BDD/TDD assertion library
+// import chai from 'chai'; // BDD/TDD assertion library - uncomment for Node.js tests
 
-const Aes    = require('../aes.js');
-const AesCtr = require('../aes-ctr.js');
-
-chai.should();
+const should = chai.should();
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
@@ -48,7 +43,7 @@ describe('aes fips test vectors', function() {
 
 describe('aes.ctr', function() {
     describe('unicode plaintext/password', function() {
-        const origtext = 'My big secret סוד קצת بت سرية  ความลับบิต 位的秘密';
+    const origtext = 'My big secret סוד קצת بت سرية  ความลับบิต 位的秘密';
 
         const ciphertext128 = AesCtr.encrypt(origtext, 'pāšşŵōřđ', 128);
         const decrypttext128 = AesCtr.decrypt(ciphertext128, 'pāšşŵōřđ', 128);
@@ -95,6 +90,11 @@ describe('aes.ctr', function() {
         it('decrypts string of 100k @ 128', function() { AesCtr.decrypt(AesCtr.encrypt(plaintext100k, password, 128), password, 128) });
         it('decrypts string of 100k @ 192', function() { AesCtr.decrypt(AesCtr.encrypt(plaintext100k, password, 192), password, 192) });
         it('decrypts string of 100k @ 256', function() { AesCtr.decrypt(AesCtr.encrypt(plaintext100k, password, 256), password, 256) });
+
+        const plaintext1M = plaintext100k.repeat(10);
+        it('decrypts string of 1M @ 128', function() { AesCtr.decrypt(AesCtr.encrypt(plaintext1M, password, 128), password, 128) });
+        it('decrypts string of 1M @ 192', function() { AesCtr.decrypt(AesCtr.encrypt(plaintext1M, password, 192), password, 192) });
+        it('decrypts string of 1M @ 256', function() { AesCtr.decrypt(AesCtr.encrypt(plaintext1M, password, 256), password, 256) });
     });
 });
 

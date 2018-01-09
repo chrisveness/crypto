@@ -1,10 +1,8 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Block TEA (xxtea) Tiny Encryption Algorithm                        (c) Chris Veness 2002-2017  */
+/* Block TEA (xxtea) Tiny Encryption Algorithm                        (c) Chris Veness 2002-2018  */
 /*                                                                                   MIT Licence  */
 /* www.movable-type.co.uk/scripts/tea-block.html                                                  */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-
-'use strict';
 
 
 /**
@@ -212,4 +210,5 @@ class Tea {
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-if (typeof module != 'undefined' && module.exports) module.exports = Tea; // ≡ export default Tea
+
+export default Tea;

@@ -1,15 +1,13 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Crypto Test Harness - TEA                                          (c) Chris Veness 2014-2017  */
+/* Crypto Test Harness - TEA                                          (c) Chris Veness 2014-2018  */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
-'use strict';
 
-const chai = require('chai');  // BDD/TDD assertion library
+import Tea from '../tea-block.js';
 
-const Tea = require('../tea-block.js');
+// import chai from 'chai'; // BDD/TDD assertion library - uncomment for Node.js tests
 
-chai.should();
-const test = it; // just an alias
+const should = chai.should();
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
@@ -19,9 +17,9 @@ const test = it; // just an alias
 describe('tea-block', function() {
     const origtext = 'My big secret סוד קצת بت سرية  ความลับบิต 位的秘密';
     const ciphertext = Tea.encrypt(origtext, 'pāšşŵōřđ');
-    const decrtext = Tea.decrypt(ciphertext, 'pāšşŵōřđ');
+    const decryptext = Tea.decrypt(ciphertext, 'pāšşŵōřđ');
 
-    test('decrypted ciphertext matches original text', function() { decrtext.should.equal(origtext); });
+    it('decrypts ciphertext to match original (unicode) text', function() { decryptext.should.equal(origtext); });
 });
 
 

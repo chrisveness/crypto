@@ -1,10 +1,8 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* SHA-512 (FIPS 180-4) implementation in JavaScript                  (c) Chris Veness 2016-2017  */
+/* SHA-512 (FIPS 180-4) implementation in JavaScript                  (c) Chris Veness 2016-2018  */
 /*                                                                                   MIT Licence  */
 /* www.movable-type.co.uk/scripts/sha512.html                                                     */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-
-'use strict';
 
 
 /**
@@ -266,4 +264,4 @@ Sha512.Long = class {
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
-if (typeof module != 'undefined' && module.exports) module.exports = Sha512; // ≡ export default Sha512
+export default Sha512;

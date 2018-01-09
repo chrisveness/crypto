@@ -1,10 +1,8 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* SHA-3 (FIPS 202) ‘Keccak’ reference implementation in JavaScript   (c) Chris Veness 2016-2017  */
+/* SHA-3 (FIPS 202) ‘Keccak’ reference implementation in JavaScript   (c) Chris Veness 2016-2018  */
 /*                                                                                   MIT Licence  */
 /* www.movable-type.co.uk/scripts/sha3.html                                                       */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-
-'use strict';
 
 
 /**
@@ -265,12 +263,12 @@ class Sha3 {
             const d = transpose(s).map(plane => plane.join('')).join('')
                 .match(/.{2}/g).join(' ')
                 .match(/.{23,48}/g).join('\n');
-            console.log(d);
+            console.info(d);
         }
 
         function debug5x5(s) { // debug of state s in 5×5 format 64-bit words
             const d = transpose(s).map(plane => plane.join(' ')).join('\n');
-            console.log(d);
+            console.info(d);
         }
 
         function transpose(array) { // to iterate across y (columns) before x (rows)
@@ -344,4 +342,4 @@ Sha3.Long = class {
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
-if (typeof module != 'undefined' && module.exports) module.exports = Sha3; // ≡ export default Sha3
+export default Sha3;

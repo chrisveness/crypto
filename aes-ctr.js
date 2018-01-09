@@ -1,12 +1,13 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* AES counter-mode (CTR) implementation in JavaScript                (c) Chris Veness 2005-2017  */
+/* AES counter-mode (CTR) implementation in JavaScript                (c) Chris Veness 2005-2018  */
 /*                                                                                   MIT Licence  */
 /* www.movable-type.co.uk/scripts/aes.html                                                        */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
 /* global WorkerGlobalScope */
-'use strict';
-// const Aes = require('./aes.js'); // ≡ import Aes from 'aes.js'; uncomment to use in Node.js
+
+
+import Aes from './aes.js';
 
 
 /**
@@ -22,7 +23,7 @@ class AesCtr extends Aes {
     /**
      * Encrypt a text using AES encryption in Counter mode of operation.
      *
-     * Unicode multi-byte character safe
+     * Unicode multi-byte character safe.
      *
      * @param   {string} plaintext - Source text to be encrypted.
      * @param   {string} password - The password to use to generate a key for encryption.
@@ -104,7 +105,7 @@ class AesCtr extends Aes {
 
 
     /**
-     * Decrypt a text encrypted by AES in counter mode of operation
+     * Decrypt a text encrypted by AES in counter mode of operation.
      *
      * @param   {string} ciphertext - Cipher text to be decrypted.
      * @param   {string} password - Password to use to generate a key for decryption.
@@ -228,4 +229,4 @@ class AesCtr extends Aes {
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
-// module.exports = AesCtr; // uncomment to use in Node.js
+export default AesCtr;
