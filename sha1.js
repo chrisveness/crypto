@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* SHA-1 (FIPS 180-4) implementation in JavaScript                    (c) Chris Veness 2002-2018  */
+/* SHA-1 (FIPS 180-4) implementation in JavaScript                    (c) Chris Veness 2002-2019  */
 /*                                                                                   MIT Licence  */
 /* www.movable-type.co.uk/scripts/sha1.html                                                       */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
@@ -84,7 +84,7 @@ class Sha1 {
             // 3 - main loop (use JavaScript '>>> 0' to emulate UInt32 variables)
             for (let t=0; t<80; t++) {
                 const s = Math.floor(t/20); // seq for blocks of 'f' functions and 'K' constants
-                const T = (Sha1.ROTL(a,5) + Sha1.f(s,b,c,d) + e + K[s] + W[t]) >>> 0;
+                const T = (Sha1.ROTL(a, 5) + Sha1.f(s, b, c, d) + e + K[s] + W[t]) >>> 0;
                 e = d;
                 d = c;
                 c = Sha1.ROTL(b, 30) >>> 0;

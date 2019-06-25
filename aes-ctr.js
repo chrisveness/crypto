@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* AES counter-mode (CTR) implementation in JavaScript                (c) Chris Veness 2005-2018  */
+/* AES counter-mode (CTR) implementation in JavaScript                (c) Chris Veness 2005-2019  */
 /*                                                                                   MIT Licence  */
 /* www.movable-type.co.uk/scripts/aes.html                                                        */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
@@ -248,7 +248,7 @@ class AesCtr extends Aes {
      */
     static utf8Encode(str) {
         try {
-            return new TextEncoder().encode(str, 'utf-8').reduce((prev,curr) => prev + String.fromCharCode(curr), '');
+            return new TextEncoder().encode(str, 'utf-8').reduce((prev, curr) => prev + String.fromCharCode(curr), '');
         } catch (e) { // no TextEncoder available?
             return unescape(encodeURIComponent(str)); // monsur.hossa.in/2012/07/20/utf-8-in-javascript.html
         }
@@ -259,7 +259,7 @@ class AesCtr extends Aes {
      */
     static utf8Decode(str) {
         try {
-            return new TextEncoder().decode(str, 'utf-8').reduce((prev,curr) => prev + String.fromCharCode(curr), '');
+            return new TextEncoder().decode(str, 'utf-8').reduce((prev, curr) => prev + String.fromCharCode(curr), '');
         } catch (e) { // no TextEncoder available?
             return decodeURIComponent(escape(str)); // monsur.hossa.in/2012/07/20/utf-8-in-javascript.html
         }

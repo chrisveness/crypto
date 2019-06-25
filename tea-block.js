@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Block TEA (xxtea) Tiny Encryption Algorithm                        (c) Chris Veness 2002-2018  */
+/* Block TEA (xxtea) Tiny Encryption Algorithm                        (c) Chris Veness 2002-2019  */
 /*                                                                                   MIT Licence  */
 /* www.movable-type.co.uk/scripts/tea-block.html                                                  */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
@@ -25,7 +25,7 @@ class Tea {
         plaintext = String(plaintext);
         password = String(password);
 
-        if (plaintext.length == 0) return(''); // nothing to encrypt
+        if (plaintext.length == 0) return ''; // nothing to encrypt
 
         //  v is n-word data vector; converted to array of longs from UTF-8 string
         const v = Tea.strToLongs(Tea.utf8Encode(plaintext));
@@ -56,19 +56,19 @@ class Tea {
         ciphertext = String(ciphertext);
         password = String(password);
 
-        if (ciphertext.length == 0) return('');  // nothing to decrypt
+        if (ciphertext.length == 0) return '';  // nothing to decrypt
 
         //  v is n-word data vector; converted to array of longs from base64 string
         const v = Tea.strToLongs(Tea.base64Decode(ciphertext));
         //  k is 4-word key; simply convert first 16 chars of password as key
-        const k = Tea.strToLongs(Tea.utf8Encode(password).slice(0,16));
+        const k = Tea.strToLongs(Tea.utf8Encode(password).slice(0, 16));
 
         const plain = Tea.decode(v, k);
 
         const plaintext = Tea.longsToStr(plain);
 
         // strip trailing null chars resulting from filling 4-char blocks:
-        const plainUnicode = Tea.utf8Decode(plaintext.replace(/\0+$/,''));
+        const plainUnicode = Tea.utf8Decode(plaintext.replace(/\0+$/, ''));
 
         return plainUnicode;
     }

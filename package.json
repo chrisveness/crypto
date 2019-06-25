@@ -4,15 +4,18 @@
     "repository": { "type": "git", "url": "https://github.com/chrisveness/crypto" },
     "author": "Chris Veness",
     "version": "0.0.0",
+    "license": "MIT",
+    "type": "module",
     "scripts": {
         "test": "mocha --exit -r esm test/*.js",
         "lint": "eslint *.js"
     },
     "devDependencies": {
-        "chai": "^4.2.0",
-        "eslint": "^5.9.0",
-        "esm": "^3.0.84",
-        "mocha": "^5.2.0"
+        "babel-eslint": "^10.0.0",
+        "chai": "^4.0.0",
+        "eslint": "^6.0.0",
+        "esm": "^3.0.0",
+        "mocha": "^6.0.0"
     },
     "eslintConfig": {
         "env": {
@@ -21,17 +24,17 @@
             "es6": true,
             "mocha": true
         },
-        "parserOptions": {
-            "ecmaVersion": 2017,
-            "sourceType": "module"
-        },
+        "parser": "babel-eslint",
         "extends": "eslint:recommended",
         "rules": {
             "array-bracket-spacing": [ "error", "always", { "singleValue": false } ],
             "comma-dangle": [ "error", "always-multiline" ],
+            "comma-spacing": [ "error" ],
             "curly": [ "error", "multi-line" ],
             "indent": [ "error", 4, { "SwitchCase": 1 } ],
             "key-spacing": [ "error", { "align": "value" } ],
+            "keyword-spacing": [ "error" ],
+            "no-case-declarations": "warn",
             "no-console": [ "warn", { "allow": [ "error", "info" ] } ],
             "no-irregular-whitespace": "warn",
             "no-redeclare": "warn",
@@ -42,6 +45,8 @@
             "prefer-const": "error",
             "quotes": [ "error", "single", "avoid-escape" ],
             "semi": [ "error", "always" ],
+            "space-before-blocks": [ "error", "always" ],
+            "space-in-parens": [ "error" ],
             "strict": [ "error", "global" ]
         }
     }
