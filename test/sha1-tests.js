@@ -1,14 +1,14 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Crypto Test Harness - SHA-1                                        (c) Chris Veness 2014-2018  */
+/* Crypto Test Harness - SHA-1                                        (c) Chris Veness 2014-2019  */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-
 
 import Sha1 from '../sha1.js';
 
-// import chai from 'chai'; // BDD/TDD assertion library - uncomment for Node.js tests
-// import fs from'fs';      // nodejs.org/api/fs.html - uncomment for Node.js tests
-
-const should = chai.should();
+if (typeof window == 'undefined') { // node
+    import('chai').then(chai => { global.should = chai.should(); });
+} else {                            // browser
+    window.should = chai.should();
+}
 
 
 describe('SHA-1', function() {
@@ -31,6 +31,7 @@ describe('SHA-1', function() {
     });
 
     function responseTestVectors(file, fn) {
+        const fs = require('fs');
         const rsp = fs.readFileSync(`./test/${file}.rsp`, 'utf8');
         const msg = rsp.split('\r\n').filter(line => line.slice(0,6) == 'Msg = ').map(line => line.slice(6));
         const md = rsp.split('\r\n').filter(line => line.slice(0,5) == 'MD = ').map(line => line.slice(5));

@@ -1,14 +1,15 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* Crypto Test Harness - AES                                          (c) Chris Veness 2014-2018  */
+/* Crypto Test Harness - AES                                          (c) Chris Veness 2014-2019  */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-
 
 import Aes    from '../aes.js';
 import AesCtr from '../aes-ctr.js';
 
-// import chai from 'chai'; // BDD/TDD assertion library - uncomment for Node.js tests
-
-chai.should();
+if (typeof window == 'undefined') { // node
+    import('chai').then(chai => { global.should = chai.should(); });
+} else {                            // browser
+    window.should = chai.should();
+}
 
 // just for this test suite!
 String.prototype.toBytes = function() { return this.replace(/ /g, '').match(/(..?)/g).map(b => parseInt('0x'+b)); };
