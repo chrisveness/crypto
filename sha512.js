@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* SHA-512 (FIPS 180-4) implementation in JavaScript                  (c) Chris Veness 2016-2018  */
+/* SHA-512 (FIPS 180-4) implementation in JavaScript                  (c) Chris Veness 2016-2019  */
 /*                                                                                   MIT Licence  */
 /* www.movable-type.co.uk/scripts/sha512.html                                                     */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
@@ -34,6 +34,10 @@ class Sha512 {
      * @param   {string} [options.outFormat=hex] - Output format: 'hex' for string of contiguous
      *   hex bytes; 'hex-w' for grouping hex bytes into groups of (8 byte / 16 character) words.
      * @returns {string} Hash of msg as hex character string.
+     *
+     * @example
+     *   import Sha512 from './sha512.js';
+     *   const hash = Sha512.hash('abc'); // 'ddaf35a193617abacc417349ae20413112e6fa4e89a97ea20a9eeee64b55d39a2192992a274fc1a836ba3c23a3feebbd454d4423643ce80e2a9ac94fa54ca49f'
      */
     static hash(msg, options) {
         const defaults = { msgFormat: 'string', outFormat: 'hex' };

@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* SHA-256 (FIPS 180-4) implementation in JavaScript                  (c) Chris Veness 2002-2018  */
+/* SHA-256 (FIPS 180-4) implementation in JavaScript                  (c) Chris Veness 2002-2019  */
 /*                                                                                   MIT Licence  */
 /* www.movable-type.co.uk/scripts/sha256.html                                                     */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
@@ -30,6 +30,10 @@ class Sha256 {
      * @param   {string} [options.outFormat=hex] - Output format: 'hex' for string of contiguous
      *   hex bytes; 'hex-w' for grouping hex bytes into groups of (4 byte / 8 character) words.
      * @returns {string} Hash of msg as hex character string.
+     *
+     * @example
+     *   import Sha256 from './sha256.js';
+     *   const hash = Sha256.hash('abc'); // 'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad'
      */
     static hash(msg, options) {
         const defaults = { msgFormat: 'string', outFormat: 'hex' };

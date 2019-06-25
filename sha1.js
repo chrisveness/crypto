@@ -30,6 +30,10 @@ class Sha1 {
      * @param   {string} [options.outFormat=hex] - Output format: 'hex' for string of contiguous
      *   hex bytes; 'hex-w' for grouping hex bytes into groups of (4 byte / 8 character) words.
      * @returns {string} Hash of msg as hex character string.
+     *
+     * @example
+     *   import Sha1 from './sha1.js';
+     *   const hash = Sha1.hash('abc'); // 'a9993e364706816aba3e25717850c26c9cd0d89d'
      */
     static hash(msg, options) {
         const defaults = { msgFormat: 'string', outFormat: 'hex' };

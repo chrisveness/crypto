@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* SHA-3 (FIPS 202) ‘Keccak’ reference implementation in JavaScript   (c) Chris Veness 2016-2018  */
+/* SHA-3 (FIPS 202) ‘Keccak’ reference implementation in JavaScript   (c) Chris Veness 2016-2019  */
 /*                                                                                   MIT Licence  */
 /* www.movable-type.co.uk/scripts/sha3.html                                                       */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
@@ -31,6 +31,10 @@ class Sha3 {
      * @param   {string} message - String to be hashed (Unicode-safe).
      * @param   {Object} options - padding: sha-3 / keccak; msgFormat: string / hex; outFormat: hex / hex-b / hex-w.
      * @returns {string} Hash as hex-encoded string.
+     *
+     * @example
+     *   import Sha3 from './sha3.js';
+     *   const hash = Sha3.hash224('abc'); // 'e642824c3f8cf24ad09234ee7d3c766fc9a3a5168d0c94ad73b46fdf'
      */
     static hash224(message, options) {
         return Sha3.keccak1600(1152, 448, message, options);
