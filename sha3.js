@@ -1,5 +1,5 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* SHA-3 (FIPS 202) ‘Keccak’ reference implementation in JavaScript   (c) Chris Veness 2016-2019  */
+/* SHA-3 (FIPS 202) ‘Keccak’ reference implementation in JavaScript   (c) Chris Veness 2016-2020  */
 /*                                                                                   MIT Licence  */
 /* www.movable-type.co.uk/scripts/sha3.html                                                       */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
@@ -101,15 +101,15 @@ class Sha3 {
         /**
          * Keccak state is a 5 × 5 x w array of bits (w=64 for keccak-f[1600] / SHA-3).
          *
-         * Here, it is implemented as a 5 × 5 array of Long. The first subscript (x) defines the
+         * Here, it is implemented as a 5 × 5 array of BigInt. The first subscript (x) defines the
          * sheet, the second (y) defines the plane, together they define a lane. Slices, columns,
-         * and individual bits are obtained by bit operations on the hi,lo components of the Long
-         * representing the lane.
+         * and individual bits are obtained by bit operations on the BigInt representing the lane
+         * (note BigInt is the JavaScript equivalent of Int64 / long).
          */
         const state = [ [], [], [], [], [] ];
         for (let x=0; x<5; x++) {
             for (let y=0; y<5; y++) {
-                state[x][y] = new Sha3.Long(0, 0);
+                state[x][y] = 0n;
             }
         }
 
@@ -123,21 +123,20 @@ class Sha3 {
             msg += String.fromCharCode(0x80);
         }
 
-        // absorbing phase: work through input message in blocks of r bits (r/64 Longs, r/8 bytes)
+        // absorbing phase: work through input message in blocks of r bits (r/64 longs, r/8 bytes)
 
         const w = 64; // for keccak-f[1600]
         const blocksize = r / w * 8; // block size in bytes (≡ utf-8 characters)
 
         for (let i=0; i<msg.length; i+=blocksize) {
             for (let j=0; j<r/w; j++) {
-                const lo = (msg.charCodeAt(i+j*8+0)<< 0) + (msg.charCodeAt(i+j*8+1)<< 8)
-                         + (msg.charCodeAt(i+j*8+2)<<16) + (msg.charCodeAt(i+j*8+3)<<24);
-                const hi = (msg.charCodeAt(i+j*8+4)<< 0) + (msg.charCodeAt(i+j*8+5)<< 8)
-                         + (msg.charCodeAt(i+j*8+6)<<16) + (msg.charCodeAt(i+j*8+7)<<24);
+                const i64 = (BigInt(msg.charCodeAt(i+j*8+0))<< 0n) + (BigInt(msg.charCodeAt(i+j*8+1))<< 8n)
+                          + (BigInt(msg.charCodeAt(i+j*8+2))<<16n) + (BigInt(msg.charCodeAt(i+j*8+3))<<24n)
+                          + (BigInt(msg.charCodeAt(i+j*8+4))<<32n) + (BigInt(msg.charCodeAt(i+j*8+5))<<40n)
+                          + (BigInt(msg.charCodeAt(i+j*8+6))<<48n) + (BigInt(msg.charCodeAt(i+j*8+7))<<56n);
                 const x = j % 5;
                 const y = Math.floor(j / 5);
-                state[x][y].lo = state[x][y].lo ^ lo;
-                state[x][y].hi = state[x][y].hi ^ hi;
+                state[x][y] = state[x][y] ^ i64;
             }
             Sha3.keccak_f_1600(state);
         }
@@ -146,7 +145,7 @@ class Sha3 {
 
         // transpose state, concatenate (little-endian) hex values, & truncate to l bits
         let md = transpose(state)
-            .map(plane => plane.map(lane => lane.toString().match(/.{2}/g).reverse().join('')).join(''))
+            .map(plane => plane.map(lane => lane.toString(16).padStart(16, '0').match(/.{2}/g).reverse().join('')).join(''))
             .join('')
             .slice(0, l/4);
 
@@ -180,7 +179,7 @@ class Sha3 {
     /**
      * Applies permutation Keccak-f[1600] to state a.
      *
-     * @param {Long[][]} a - State to be permuted (5 × 5 array of Long).
+     * @param {BigInt[][]} a - State to be permuted (5 × 5 array of BigInt).
      *
      * @private
      */
@@ -197,16 +196,15 @@ class Sha3 {
          *   rc[t] = ( xᵗ mod x⁸ + x⁶ + x⁵ + x⁴ + 1 ) mod x in GF(2)[x].
          */
         const RC = [
-            '0000000000000001', '0000000000008082', '800000000000808a',
-            '8000000080008000', '000000000000808b', '0000000080000001',
-            '8000000080008081', '8000000000008009', '000000000000008a',
-            '0000000000000088', '0000000080008009', '000000008000000a',
-            '000000008000808b', '800000000000008b', '8000000000008089',
-            '8000000000008003', '8000000000008002', '8000000000000080',
-            '000000000000800a', '800000008000000a', '8000000080008081',
-            '8000000000008080', '0000000080000001', '8000000080008008',
-        ].map(c => Sha3.Long.fromString(c));
-
+            0x0000000000000001n, 0x0000000000008082n, 0x800000000000808an,
+            0x8000000080008000n, 0x000000000000808bn, 0x0000000080000001n,
+            0x8000000080008081n, 0x8000000000008009n, 0x000000000000008an,
+            0x0000000000000088n, 0x0000000080008009n, 0x000000008000000an,
+            0x000000008000808bn, 0x800000000000008bn, 0x8000000000008089n,
+            0x8000000000008003n, 0x8000000000008002n, 0x8000000000000080n,
+            0x000000000000800an, 0x800000008000000an, 0x8000000080008081n,
+            0x8000000000008080n, 0x0000000080000001n, 0x8000000080008008n,
+        ];
 
         // Keccak-f permutations
         for (let r=0; r<nRounds; r++) {
@@ -215,30 +213,26 @@ class Sha3 {
             // θ [Keccak §2.3.2]
             const C = [], D = []; // intermediate sub-states
             for (let x=0; x<5; x++) {
-                C[x] = a[x][0].clone();
+                C[x] = a[x][0];
                 for (let y=1; y<5; y++) {
-                    C[x].hi = C[x].hi ^ a[x][y].hi;
-                    C[x].lo = C[x].lo ^ a[x][y].lo;
+                    C[x] = C[x] ^ a[x][y];
                 }
             }
             for (let x=0; x<5; x++) {
                 // D[x] = C[x−1] ⊕ ROT(C[x+1], 1)
-                const hi = C[(x+4)%5].hi ^ ROT(C[(x+1)%5], 1).hi;
-                const lo = C[(x+4)%5].lo ^ ROT(C[(x+1)%5], 1).lo;
-                D[x] = new Sha3.Long(hi, lo);
+                D[x] = C[(x+4)%5] ^ ROT(C[(x+1)%5], 1);
                 // a[x,y] = a[x,y] ⊕ D[x]
                 for (let y=0; y<5; y++) {
-                    a[x][y].hi = a[x][y].hi ^ D[x].hi;
-                    a[x][y].lo = a[x][y].lo ^ D[x].lo;
+                    a[x][y] = a[x][y] ^ D[x];
                 }
             }
 
             // ρ + π [Keccak §2.3.4]
             let [ x, y ] = [ 1, 0 ];
-            let current = a[x][y].clone();
+            let current = a[x][y];
             for (let t=0; t<24; t++) {
                 const [ X, Y ] = [ y, (2*x + 3*y) % 5 ];
-                const tmp = a[X][Y].clone();
+                const tmp = a[X][Y];
                 a[X][Y] = ROT(current, ((t+1)*(t+2)/2) % 64);
                 current = tmp;
                 [ x, y ] = [ X, Y ];
@@ -250,25 +244,23 @@ class Sha3 {
             // χ [Keccak §2.3.1]
             for (let y=0; y<5; y++) {
                 const C = [];  // take a copy of the plane
-                for (let x=0; x<5; x++) C[x] = a[x][y].clone();
+                for (let x=0; x<5; x++) C[x] = a[x][y];
                 for (let x=0; x<5; x++) {
-                    a[x][y].hi = (C[x].hi ^ ((~C[(x+1)%5].hi) & C[(x+2)%5].hi)) >>> 0;
-                    a[x][y].lo = (C[x].lo ^ ((~C[(x+1)%5].lo) & C[(x+2)%5].lo)) >>> 0;
+                    a[x][y] = (C[x] ^ ((~C[(x+1)%5]) & C[(x+2)%5]));
                 }
             }
 
             // ι [Keccak §2.3.5]
-            a[0][0].hi = (a[0][0].hi ^ RC[r].hi) >>> 0;
-            a[0][0].lo = (a[0][0].lo ^ RC[r].lo) >>> 0;
+            a[0][0] = (a[0][0] ^ RC[r]);
         }
 
-        function ROT(a, d) {
-            return a.rotl(d);
+        function ROT(a, d) { // 64-bit rotate left
+            return BigInt.asUintN(64, a << BigInt(d) | a >> BigInt(64-d));
         }
 
         function debugNist(s) { // debug of state s in NIST format
             const d = transpose(s)
-                .map(plane => plane.map(lane => lane.toString().match(/.{2}/g).reverse().join('')).join(''))
+                .map(plane => plane.map(lane => lane.toString(16).padStart(16, '0').match(/.{2}/g).reverse().join('')).join(''))
                 .join('')
                 .match(/.{2}/g).join(' ')
                 .match(/.{23,48}/g).join('\n');
@@ -276,7 +268,9 @@ class Sha3 {
         }
 
         function debug5x5(s) { // debug of state s in 5×5 format 64-bit words
-            const d = transpose(s).map(plane => plane.join(' ')).join('\n');
+            const d = transpose(s)
+                .map(plane => plane.map(lane => lane.toString(16).padStart(16, '0')).join(' '))
+                .join('\n');
             console.info(d);
         }
 
@@ -286,67 +280,6 @@ class Sha3 {
     }
 
 }
-
-
-/**
- * JavaScript has no support for 64-bit integers; this class provides methods required to support
- * 64-bit unsigned integers within Keccak.
- */
-Sha3.Long = class {
-
-    constructor(hi, lo) {
-        this.hi = hi;
-        this.lo = lo;
-    }
-
-    /**
-     * Construct Long from string representation.
-     */
-    static fromString(str) {
-        const [ hi, lo ] = str.match(/.{8}/g).map(i32 => parseInt(i32, 16));
-        return new Sha3.Long(hi, lo);
-    }
-
-    /**
-     * Copy 'this' Long.
-     */
-    clone() {
-        return new Sha3.Long(this.hi, this.lo);
-    }
-
-    /**
-     * Rotate left by n bits.
-     */
-    rotl(n) {
-        if (n < 32) {
-            const m = 32 - n;
-            const lo = this.lo<<n | this.hi>>>m;
-            const hi = this.hi<<n | this.lo>>>m;
-            return new Sha3.Long(hi, lo);
-        }
-        if (n == 32) {
-            return new Sha3.Long(this.lo, this.hi);
-        }
-        if (n > 32) {
-            n -= 32;
-            const m = 32 - n;
-            const lo = this.hi<<n | this.lo>>>m;
-            const hi = this.lo<<n | this.hi>>>m;
-            return new Sha3.Long(hi, lo);
-        }
-    }
-
-    /**
-     * Representation of this Long as a hex string.
-     */
-    toString() {
-        const hi = ('00000000'+(this.hi>>>0).toString(16)).slice(-8);
-        const lo = ('00000000'+(this.lo>>>0).toString(16)).slice(-8);
-
-        return hi + lo;
-    }
-
-};
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
