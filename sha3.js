@@ -145,7 +145,10 @@ class Sha3 {
         // squeezing phase: first l bits of state are message digest
 
         // transpose state, concatenate (little-endian) hex values, & truncate to l bits
-        let md = transpose(state).map(plane => plane.map(lane => lane.toString().match(/.{2}/g).reverse().join('')).join('')).join('').slice(0, l/4);
+        let md = transpose(state)
+            .map(plane => plane.map(lane => lane.toString().match(/.{2}/g).reverse().join('')).join(''))
+            .join('')
+            .slice(0, l/4);
 
         // if required, group message digest into bytes or words
         if (opt.outFormat == 'hex-b') md = md.match(/.{2}/g).join(' ');
@@ -264,7 +267,9 @@ class Sha3 {
         }
 
         function debugNist(s) { // debug of state s in NIST format
-            const d = transpose(s).map(plane => plane.join('')).join('')
+            const d = transpose(s)
+                .map(plane => plane.map(lane => lane.toString().match(/.{2}/g).reverse().join('')).join(''))
+                .join('')
                 .match(/.{2}/g).join(' ')
                 .match(/.{23,48}/g).join('\n');
             console.info(d);
@@ -335,8 +340,8 @@ Sha3.Long = class {
      * Representation of this Long as a hex string.
      */
     toString() {
-        const hi = ('00000000'+this.hi.toString(16)).slice(-8);
-        const lo = ('00000000'+this.lo.toString(16)).slice(-8);
+        const hi = ('00000000'+(this.hi>>>0).toString(16)).slice(-8);
+        const lo = ('00000000'+(this.lo>>>0).toString(16)).slice(-8);
 
         return hi + lo;
     }
