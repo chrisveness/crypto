@@ -6,16 +6,16 @@
     "version": "0.0.0",
     "license": "MIT",
     "type": "module",
+    "engines": { "node":  "^13.2.0" },
     "scripts": {
-        "test": "mocha --exit -r esm test/*.js",
+        "test": "mocha --exit test/*.js",
         "lint": "eslint *.js"
     },
     "devDependencies": {
         "babel-eslint": "^10.0.0",
-        "chai": "^4.0.0",
-        "eslint": "^6.0.0",
-        "esm": "^3.0.0",
-        "mocha": "^6.0.0"
+        "chai": "chaijs/chai#pull/1317/head",
+        "eslint": "^7.0.0",
+        "mocha": "^7.0.0"
     },
     "eslintConfig": {
         "env": {
