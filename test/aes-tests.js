@@ -2,12 +2,13 @@
 /* Crypto Test Harness - AES                                          (c) Chris Veness 2014-2019  */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
-import Aes    from '../aes.js';
-import AesCtr from '../aes-ctr.js';
+import Aes    from '../src/aes.js';
+import AesCtr from '../src/aes-ctr.js';
 
 if (typeof window == 'undefined') { // node
     import('chai').then(chai => { global.should = chai.should(); });
 } else {                            // browser
+    // eslint-disable-next-line no-undef
     window.should = chai.should();
 }
 

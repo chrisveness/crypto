@@ -10,16 +10,18 @@
     "license": "MIT",
     "type": "module",
     "engines": {
-        "node": "^13.2.0"
+        "node": ">=13.2.0"
     },
     "scripts": {
         "test": "mocha --exit test/*.js",
-        "lint": "eslint *.js"
+        "test:browser": "http-server -a localhost --cors -o test/index.html",
+        "lint": "eslint {src,test}/*.js"
     },
     "devDependencies": {
         "babel-eslint": "^10.0.0",
         "chai": "chaijs/chai#pull/1317/head",
         "eslint": "^7.0.0",
+        "http-server": "^0.12.3",
         "mocha": "^7.0.0"
     },
     "eslintConfig": {

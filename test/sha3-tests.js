@@ -2,11 +2,12 @@
 /* Crypto Test Harness - SHA-3                                        (c) Chris Veness 2016-2019  */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
-import Sha3 from '../sha3.js';
+import Sha3 from '../src/sha3.js';
 
 if (typeof window == 'undefined') { // node
     import('chai').then(chai => { global.should = chai.should(); });
 } else {                            // browser
+    // eslint-disable-next-line no-undef
     window.should = chai.should();
 }
 
@@ -62,8 +63,8 @@ describe('SHA-3', function() {
     function responseTestVectors(file, fn) {
         const fs = require('fs');
         const rsp = fs.readFileSync(`./test/${file}.rsp`, 'utf8');
-        const msg = rsp.split('\r\n').filter(line => line.slice(0,6) == 'Msg = ').map(line => line.slice(6));
-        const md = rsp.split('\r\n').filter(line => line.slice(0,5) == 'MD = ').map(line => line.slice(5));
+        const msg = rsp.split('\r\n').filter(line => line.slice(0, 6) == 'Msg = ').map(line => line.slice(6));
+        const md = rsp.split('\r\n').filter(line => line.slice(0, 5) == 'MD = ').map(line => line.slice(5));
         for (let t=0; t<msg.length; t++) {
             if (msg[t] == '00') msg[t] = ''; // what are NIST up to? '00'.length == 0? duh!
             it(`hashes ${file} Len ${msg[t].length}`, function() { fn(msg[t], { msgFormat: 'hex-bytes' }).should.equal(md[t]); });

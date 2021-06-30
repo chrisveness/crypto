@@ -2,11 +2,12 @@
 /* Crypto Test Harness - TEA                                          (c) Chris Veness 2014-2019  */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
-import Tea from '../tea-block.js';
+import Tea from '../src/tea-block.js';
 
 if (typeof window == 'undefined') { // node
     import('chai').then(chai => { global.should = chai.should(); });
 } else {                            // browser
+    // eslint-disable-next-line no-undef
     window.should = chai.should();
 }
 
