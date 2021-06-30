@@ -15,14 +15,15 @@
     "scripts": {
         "test": "mocha --exit test/*.js",
         "test:browser": "http-server -a localhost --cors -o test/index.html",
+        "test:serve": "serve -l 8080",
         "lint": "eslint {src,test}/*.js"
     },
     "devDependencies": {
         "babel-eslint": "^10.0.0",
         "chai": "chaijs/chai#pull/1317/head",
         "eslint": "^7.0.0",
-        "http-server": "^0.12.3",
-        "mocha": "^7.0.0"
+        "mocha": "^7.0.0",
+        "serve": "^12.0.0"
     },
     "eslintConfig": {
         "env": {
