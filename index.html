@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-control" content="NO-CACHE">
+    <title>Crypto Browser Test</title>
+
+    <link rel="stylesheet" href="node_modules/mocha/mocha.css" />
+    <script src="node_modules/mocha/mocha.js"></script>
+    <script src="node_modules/chai/chai.js"  type="module"></script>
+
+    <script type="module" class="mocha-init">
+      mocha.setup('bdd');
+    </script>
+
+  </head>
+
+  <body onload="mochaRun()">
+    <h1>Testing crypto in a browser</h1>
+    <div id="mocha"></div>
+
+    <script src="test/aes-tests.js" type="module"></script>
+    <script src="test/sha1-tests.js" type="module"></script>
+    <script src="test/sha2-tests.js" type="module"></script>
+    <script src="test/sha3-tests.js" type="module"></script>
+    <script src="test/tea-tests.js" type="module"></script>
+
+    <script class="mocha-exec">
+      function mochaRun() {
+        mocha.run();
+      }
+    </script>
+  </body>
+
+</html>

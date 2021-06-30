@@ -258,6 +258,7 @@ class Sha3 {
             return BigInt.asUintN(64, a << BigInt(d) | a >> BigInt(64-d));
         }
 
+        // eslint-disable-next-line no-unused-vars
         function debugNist(s) { // debug of state s in NIST format
             const d = transpose(s)
                 .map(plane => plane.map(lane => lane.toString(16).padStart(16, '0').match(/.{2}/g).reverse().join('')).join(''))
@@ -267,6 +268,7 @@ class Sha3 {
             console.info(d);
         }
 
+        // eslint-disable-next-line no-unused-vars
         function debug5x5(s) { // debug of state s in 5×5 format 64-bit words
             const d = transpose(s)
                 .map(plane => plane.map(lane => lane.toString(16).padStart(16, '0')).join(' '))
